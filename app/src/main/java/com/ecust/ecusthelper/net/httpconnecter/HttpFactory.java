@@ -5,23 +5,21 @@ import com.ecust.ecusthelper.interfacer.IHttp;
 import java.util.WeakHashMap;
 
 /**
- * Created by 彩笔怪盗基德 on 2016/3/16.
- * https://github.com/chenjj2048
+ * Created on 2016/3/16
+ *
+ * @author chenjj2048
  */
 public class HttpFactory {
     private static final int HTTP_URL_CONNECTION = 1;
     private static final int VOLLEY = 2;
     private static final int OK_HTTP = 3;
 
-    public static WeakHashMap<Integer, IHttp> mWeakHashMap;
+    private static WeakHashMap<Integer, IHttp> mWeakHashMap = new WeakHashMap<>();
 
     private HttpFactory() {
     }
 
     private static IHttp getHttpConnecter(int key) {
-        if (mWeakHashMap == null)
-            mWeakHashMap = new WeakHashMap<>();
-
         IHttp mConnecter = mWeakHashMap.get(key);
         if (mConnecter == null) {
             switch (key) {

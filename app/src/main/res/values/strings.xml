@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">EcustHelper</string>
+    <string name="close">drawer_close</string>
+    <string name="open">drawer_open</string>
 </resources>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:title="校园资讯">
+        <menu>
+            <item
+                android:id="@+id/menu_information_news"
+                android:icon="@mipmap/ic_launcher"
+                android:title="新闻综合" />
+            <item
+                android:id="@+id/menu_information_notification"
+                android:icon="@mipmap/ic_launcher"
+                android:title="通知公告" />
+            <item
+                android:id="@+id/menu_information_lecture"
+                android:icon="@mipmap/ic_launcher"
+                android:title="讲座报告" />
+        </menu>
+    </item>
+
+    <item android:title="图书馆">
+        <menu>
+            <item
+                android:id="@+id/menu_library_introduce"
+                android:icon="@mipmap/ic_launcher"
+                android:title="介绍" />
+            <item
+                android:id="@+id/menu_library_book_query"
+                android:icon="@mipmap/ic_launcher"
+                android:title="借阅查询" />
+            <item
+                android:id="@+id/menu_library_seats_query"
+                android:icon="@mipmap/ic_launcher"
+                android:title="座位查询" />
+        </menu>
+    </item>
+
+    <item android:title="校园生活">
+        <menu>
+            <item
+                android:id="@+id/menu_schoollife_campuscard"
+                android:icon="@mipmap/ic_launcher"
+                android:title="校园卡" />
+            <item
+                android:id="@+id/menu_schoollife_weibo"
+                android:icon="@mipmap/ic_launcher"
+                android:title="微博动态" />
+        </menu>
+    </item>
+
+    <item android:title="校园信息">
+        <menu>
+            <item
+                android:id="@+id/menu_school_introduce"
+                android:icon="@mipmap/ic_launcher"
+                android:title="学校概况" />
+            <item
+                android:id="@+id/menu_school_scenery"
+                android:icon="@mipmap/ic_launcher"
+                android:title="校园风光" />
+        </menu>
+    </item>
+
+    <item android:title="应用信息">
+        <menu>
+            <item
+                android:id="@+id/menu_app_settings"
+                android:icon="@mipmap/ic_launcher"
+                android:title="设置" />
+            <item
+                android:id="@+id/menu_app_about"
+                android:icon="@mipmap/ic_launcher"
+                android:title="关于" />
+        </menu>
+    </item>
+</menu>

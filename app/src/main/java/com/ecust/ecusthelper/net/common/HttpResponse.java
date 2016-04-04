@@ -5,8 +5,9 @@ import com.ecust.ecusthelper.util.ConvertUtil;
 import java.io.InputStream;
 
 /**
- * Created by 彩笔怪盗基德 on 2016/3/17.
- * https://github.com/chenjj2048
+ * Created on 2016/3/17
+ *
+ * @author chenjj2048
  */
 public class HttpResponse extends cn.trinea.android.common.entity.HttpResponse {
     private InputStream inputStream;

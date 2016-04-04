@@ -1,81 +1,111 @@
 package com.ecust.ecusthelper.ui.activity;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.widget.ImageView;
+import android.view.MenuItem;
+import android.view.View;
 
 import com.ecust.ecusthelper.R;
-import com.ecust.ecusthelper.interfacer.IHttp;
-import com.ecust.ecusthelper.net.common.HttpCallback;
-import com.ecust.ecusthelper.net.common.HttpRequest;
-import com.ecust.ecusthelper.net.common.HttpResponse;
-import com.ecust.ecusthelper.net.httpconnecter.HttpFactory;
-import com.ecust.ecusthelper.util.ConvertUtil;
+import com.ecust.ecusthelper.ui.fragment.ContentFragment;
+import com.ecust.ecusthelper.ui.fragment.DrawerFragment;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
     //Todo:轮循、CordinderLayout、视差动画
 
+    @Bind(R.id.drawerLayout)
+    DrawerLayout mDrawerLayout;
+    DrawerFragment mDrawerFragment;
+    ContentFragment mContentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        FloatingActionButton
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                IHttp http = HttpFactory.newHttpUrlConnection();
-                http.getSynchronousData("http://www.baidu.com", new HttpCallback() {
-                    @Override
-                    public void onResponse(HttpRequest request, HttpResponse response) {
-                        Log.i("aaa", response.getResponseBody());
-                    }
-
-                    @Override
-                    public void onError(HttpRequest request, Exception e) {
-
-                    }
-                });
-
-
-                http.getSynchronousData("http://news.ecust.edu.cn/uploads/top_news/first_image/33/03.jpg",
-                        new HttpCallback() {
-                            @Override
-                            public void onResponse(HttpRequest request, HttpResponse response) {
-                                try {
-                                    byte[] bytes = ConvertUtil.inputStream2bytes(response.getInputStream());
-                                    final Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
-
-
-                                    final ImageView iv = (ImageView) findViewById(R.id.iv);
-                                    runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            iv.setImageBitmap(bitmap);
-                                        }
-                                    });
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            @Override
-                            public void onError(HttpRequest request, Exception e) {
-
-                            }
-                        });
-            }
-        }).start();
-
-
+        init();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            toggleDrawer();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
+    @Override
+    public void onBackPressed() {
+        if (isDrawerOpen()) {
+            closeDrawer();
+            return;
+        }
+        Snackbar.make(this.getCurrentFocus(), "clos", Snackbar.LENGTH_LONG).show();
+        super.onBackPressed();
+    }
+
+    private void init() {
+        ButterKnife.bind(this);
+        setupDrawerFragment();
+        setupContentFragment();
+        setupDrawerLayout();
+    }
+
+    private void setupDrawerLayout() {
+        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                setTitle("openeded");
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                mDrawerFragment.scrollToHead();
+                setTitle("closeddd");
+            }
+        };
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
+    }
+
+    private void setupDrawerFragment() {
+        mDrawerFragment = new DrawerFragment();
+        getFragmentManager().beginTransaction()
+                .replace(R.id.drawer, mDrawerFragment)
+                .commit();
+    }
+
+    private void setupContentFragment() {
+        mContentFragment = new ContentFragment();
+        getFragmentManager().beginTransaction()
+                .replace(R.id.content, mContentFragment)
+                .commit();
+    }
+
+    public boolean isDrawerOpen() {
+        return mDrawerLayout.isDrawerOpen(GravityCompat.START);
+    }
+
+    public void openDrawer() {
+        mDrawerLayout.openDrawer(GravityCompat.START);
+    }
+
+    public void closeDrawer() {
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+    }
+
+    public void toggleDrawer() {
+        if (isDrawerOpen())
+            closeDrawer();
+        else
+            openDrawer();
+    }
 }

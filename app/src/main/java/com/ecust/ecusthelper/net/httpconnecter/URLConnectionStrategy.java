@@ -9,16 +9,17 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Created by 彩笔怪盗基德 on 2016/3/15.
- * https://github.com/chenjj2048
+ * Created on 2016/3/15
+ *
+ * @author chenjj2048
  */
-public class URLConnectionStrategy extends AbstractHttpConnecter {
+public class URLConnectionStrategy extends AbstractHttp {
     protected URLConnectionStrategy() {
     }
 
     @Override
     public void getSynchronousData(HttpRequest request, HttpCallback callback) {
-        if (super.isRequestOrCallbackEmpty(request, callback)) return;
+        requireNonNull(request, callback);
 
         //访问网络
         InputStream inputStream = null;
