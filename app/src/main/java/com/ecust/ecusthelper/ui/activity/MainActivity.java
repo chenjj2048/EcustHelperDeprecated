@@ -5,9 +5,10 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.view.MenuItem;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import com.annimon.stream.Objects;
 import com.ecust.ecusthelper.R;
 import com.ecust.ecusthelper.ui.fragment.ContentFragment;
 import com.ecust.ecusthelper.ui.fragment.DrawerFragment;
@@ -26,6 +27,7 @@ public class MainActivity extends BaseAppCompatActivity {
     DrawerLayout mDrawerLayout;
     DrawerFragment mDrawerFragment;
     ContentFragment mContentFragment;
+    Toolbar mToolbar;
 
     private ExitUtil mExitUtil;
 
@@ -36,54 +38,57 @@ public class MainActivity extends BaseAppCompatActivity {
 
         setupDrawerFragment();
         setupContentFragment();
-        setupDrawerLayout();
-        setTitle("Demo");
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            toggleDrawer();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
     protected void setStatusBar() {
-//        有问题的写法1:
-//        StatusBarUtil.setTranslucentForDrawerLayout(this, mDrawerLayout);
-
-//        写法2，灰色的啊，怎么回事:
-        int mStatusBarColor = getResources().getColor(android.R.color.holo_green_light);
-        StatusBarUtil.setColorForDrawerLayout(this, mDrawerLayout, mStatusBarColor, 100);
+        Objects.requireNonNull(mDrawerLayout);
+        final int mStatusBarColor = getResources().getColor(R.color.colorPrimary);
+        final int DEFAULT_ALPHA = 50;
+        StatusBarUtil.setColorForDrawerLayout(this, mDrawerLayout, mStatusBarColor, DEFAULT_ALPHA);
     }
 
     @Override
     public void onBackPressed() {
-        if (isDrawerOpen()) {
+        if (isDrawerOpen())
             closeDrawer();
-        } else {
-            if (mExitUtil == null)
-                mExitUtil = new ExitUtil();
-            mExitUtil.tryExit();
-        }
+        else
+            tryExit();
     }
 
-    private void setupDrawerLayout() {
-        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.open, R.string.close) {
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-            }
+    private void tryExit() {
+        if (mExitUtil == null)
+            mExitUtil = new ExitUtil();
+        mExitUtil.tryExit();
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // 等Fragment CreateView后，再获取其中toolbar,延时加载
+        setupDrawerLayoutDelayed();
+    }
+
+    /**
+     * Toolbar没设置时即为第一次运行
+     */
+    private boolean isFirstRun() {
+        return mToolbar == null;
+    }
+
+    private void setupDrawerLayoutDelayed() {
+        if (!isFirstRun()) return;
+
+        Objects.requireNonNull(mToolbar = mContentFragment.getToolbar());
+        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+                mToolbar, R.string.open, R.string.close) {
             @Override
             public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
                 mDrawerFragment.navigationScrollToTop();
             }
         };
         mDrawerLayout.addDrawerListener(mDrawerToggle);
+        mDrawerToggle.syncState();
     }
 
     private void setupDrawerFragment() {

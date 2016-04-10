@@ -19,24 +19,20 @@ public class BaseAppCompatActivity extends AppCompatActivity {
     public void setContentView(View view) {
         super.setContentView(view);
         ButterKnife.bind(this);
+        setStatusBar();
     }
 
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
         super.setContentView(layoutResID);
         ButterKnife.bind(this);
+        setStatusBar();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         ButterKnife.unbind(this);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        setStatusBar();
     }
 
     @SuppressWarnings("deprecation")

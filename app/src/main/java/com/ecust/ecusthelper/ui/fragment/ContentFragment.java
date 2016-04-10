@@ -38,4 +38,8 @@ public class ContentFragment extends BaseFragment {
             activity.getSupportActionBar().setHomeButtonEnabled(true);
         }
     }
+
+    public Toolbar getToolbar() {
+        return mToolbar;
+    }
 }
