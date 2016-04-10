@@ -5,31 +5,39 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.ecust.ecusthelper.R;
 import com.ecust.ecusthelper.ui.fragment.ContentFragment;
 import com.ecust.ecusthelper.ui.fragment.DrawerFragment;
+import com.jaeger.library.StatusBarUtil;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.Bind;
-import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseAppCompatActivity {
 
-    //Todo:轮循、CordinderLayout、视差动画
+    //Todo:以后加轮循、CordinderLayout、视差动画
 
     @Bind(R.id.drawerLayout)
     DrawerLayout mDrawerLayout;
     DrawerFragment mDrawerFragment;
     ContentFragment mContentFragment;
 
+    private ExitUtil mExitUtil;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        init();
+
+        setupDrawerFragment();
+        setupContentFragment();
+        setupDrawerLayout();
+        setTitle("Demo");
     }
 
     @Override
@@ -42,20 +50,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void setStatusBar() {
+//        有问题的写法1:
+//        StatusBarUtil.setTranslucentForDrawerLayout(this, mDrawerLayout);
+
+//        写法2，灰色的啊，怎么回事:
+        int mStatusBarColor = getResources().getColor(android.R.color.holo_green_light);
+        StatusBarUtil.setColorForDrawerLayout(this, mDrawerLayout, mStatusBarColor, 100);
+    }
+
+    @Override
     public void onBackPressed() {
         if (isDrawerOpen()) {
             closeDrawer();
-            return;
+        } else {
+            if (mExitUtil == null)
+                mExitUtil = new ExitUtil();
+            mExitUtil.tryExit();
         }
-        Snackbar.make(this.getCurrentFocus(), "clos", Snackbar.LENGTH_LONG).show();
-        super.onBackPressed();
-    }
-
-    private void init() {
-        ButterKnife.bind(this);
-        setupDrawerFragment();
-        setupContentFragment();
-        setupDrawerLayout();
     }
 
     private void setupDrawerLayout() {
@@ -63,14 +75,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                setTitle("openeded");
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                mDrawerFragment.scrollToHead();
-                setTitle("closeddd");
+                mDrawerFragment.navigationScrollToTop();
             }
         };
         mDrawerLayout.addDrawerListener(mDrawerToggle);
@@ -107,5 +117,51 @@ public class MainActivity extends AppCompatActivity {
             closeDrawer();
         else
             openDrawer();
+    }
+
+    /**
+     * 短时间内两次调用，方可退出程序，否则显示提示消息
+     */
+    private final class ExitUtil {
+        private static final long EXIT_IN_DELTA_TIME = 1500;
+        /**
+         * Snackbar未显示时置为null,显示时为非null
+         */
+        private Snackbar mSnackbar;
+
+        public void tryExit() {
+            if (mSnackbar == null) {
+                showSnackBar(EXIT_IN_DELTA_TIME);
+            } else {
+                exitApp();
+            }
+        }
+
+        private void showSnackBar(long duration) {
+            mSnackbar = getNewSnackbar();
+            mSnackbar.show();
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    if (mSnackbar != null) {
+                        mSnackbar.dismiss();
+                        mSnackbar = null;
+                    }
+                }
+            }, duration);
+        }
+
+        private Snackbar getNewSnackbar() {
+            if (getCurrentFocus() != null)
+                return Snackbar.make(getCurrentFocus(), "再按一次退出程序", Snackbar.LENGTH_INDEFINITE)
+                        .setAction("退出", v -> tryExit());
+            else
+                throw new NullPointerException("Snackbar第一个参数为空");
+        }
+
+        private void exitApp() {
+            mSnackbar = null;
+            MainActivity.super.onBackPressed();
+        }
     }
 }

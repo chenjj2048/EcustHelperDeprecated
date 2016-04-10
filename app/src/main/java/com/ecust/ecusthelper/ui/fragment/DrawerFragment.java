@@ -1,6 +1,5 @@
 package com.ecust.ecusthelper.ui.fragment;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.internal.NavigationMenuView;
@@ -23,7 +22,7 @@ import butterknife.ButterKnife;
  * Created by 彩笔怪盗基德 on 2016/3/22.
  * https://github.com/chenjj2048
  */
-public class DrawerFragment extends Fragment {
+public class DrawerFragment extends BaseFragment {
     @Bind(R.id.navigation_view)
     NavigationView mNavigationView;
 
@@ -50,7 +49,7 @@ public class DrawerFragment extends Fragment {
         });
     }
 
-    public void scrollToHead() {
+    public void navigationScrollToTop() {
         ((NavigationMenuView) mNavigationView.getChildAt(0)).scrollToPosition(0);
     }
 
@@ -147,6 +146,7 @@ public class DrawerFragment extends Fragment {
         protected boolean handlerItem(MenuItem data) {
             switch (data.getItemId()) {
                 case R.id.menu_app_settings:
+                    //ToDo: Matherial Dialogue License
                 case R.id.menu_app_about:
                     Snackbar.make(getView(), "APP" + data.getTitle(), Snackbar.LENGTH_LONG).show();
                     return true;

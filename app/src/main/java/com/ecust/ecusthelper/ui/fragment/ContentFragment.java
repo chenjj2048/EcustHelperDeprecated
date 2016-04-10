@@ -1,6 +1,5 @@
 package com.ecust.ecusthelper.ui.fragment;
 
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -17,7 +16,7 @@ import butterknife.ButterKnife;
  * Created by 彩笔怪盗基德 on 2016/3/22.
  * https://github.com/chenjj2048
  */
-public class ContentFragment extends Fragment {
+public class ContentFragment extends BaseFragment {
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
 
