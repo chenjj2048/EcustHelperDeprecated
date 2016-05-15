@@ -2,9 +2,10 @@ package com.ecust.ecusthelper;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.StrictMode;
 
 import com.beardedhen.androidbootstrap.TypefaceProvider;
-import com.ecust.ecusthelper.util.logUtils.logUtil;
+import com.ecust.ecusthelper.util.log.logUtil;
 import com.squareup.leakcanary.LeakCanary;
 
 /**
@@ -24,11 +25,36 @@ public class EcustApplication extends Application {
         super.onCreate();
         context = getApplicationContext();
         setupLogger();
-        setup_LeakCanary();
-        setup_Android_Bootstrap_UI();
+        setupUncaughtException();
+        setupLeakCanary();
+        setupAndroid_Bootstrap_UI();
+        setupStrictMode();
     }
 
-    private void setup_LeakCanary() {
+    private void setupStrictMode() {
+        if (!BuildConfig.DEBUG) return;
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                .detectDiskReads()
+                .detectDiskWrites()
+                .detectCustomSlowCalls()    //StrictMode.noteSlowCall();
+                .detectNetwork()   // or .detectAll() for all detectable problems
+                .detectAll()
+                .penaltyLog()
+                .penaltyDialog()
+                .build());
+        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                .detectLeakedSqlLiteObjects()
+                .detectLeakedClosableObjects()
+                .penaltyLog()
+                .penaltyDeath()
+                .build());
+    }
+
+    private void setupUncaughtException() {
+        Thread.setDefaultUncaughtExceptionHandler(new AppCrashException());
+    }
+
+    private void setupLeakCanary() {
         LeakCanary.install(this);
     }
 
@@ -36,7 +62,7 @@ public class EcustApplication extends Application {
         logUtil.enable(BuildConfig.DEBUG);
     }
 
-    private void setup_Android_Bootstrap_UI() {
+    private void setupAndroid_Bootstrap_UI() {
         TypefaceProvider.registerDefaultIconSets();
     }
 }
