@@ -12,10 +12,16 @@ import android.view.ViewGroup;
 
 import com.ecust.ecusthelper.R;
 import com.ecust.ecusthelper.base.BaseMvpFragment;
-import com.ecust.ecusthelper.consts.NewsFragmentTitleConst;
+import com.ecust.ecusthelper.bean.news.NewsItem;
+import com.ecust.ecusthelper.consts.NewsConst;
 import com.ecust.ecusthelper.customview.DividerItemDecoration;
+import com.ecust.ecusthelper.util.log.logUtil;
+
+import java.util.List;
+import java.util.Locale;
 
 import butterknife.Bind;
+import cn.trinea.android.common.util.ToastUtils;
 
 /**
  * Created on 2016/4/16
@@ -49,6 +55,8 @@ public class NewsFragment extends BaseMvpFragment<NewsContract.Presenter> implem
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setupRecyclerView();
+
+        getPresenter().getLatestData();
     }
 
     private void setupRecyclerView() {
@@ -65,9 +73,30 @@ public class NewsFragment extends BaseMvpFragment<NewsContract.Presenter> implem
     }
 
     @Override
-    public String getHomePageUrl() {
-        return NewsFragmentTitleConst.getUrl(mFragmentIndex);
+    public String getCurrentTitle() {
+        return NewsConst.getTitle(mFragmentIndex);
     }
 
+    @Override
+    public void onDataNotAvailable() {
+        final String msg = "【" + getCurrentTitle() + "】" + "数据获取失败";
+        ToastUtils.show(getContext(), msg);
+        logUtil.d(this, msg);
+    }
 
+    @Override
+    public void onDataArrived(boolean latestRefreshed, List<NewsItem> newsItems) {
+        getPresenter().getAdapter().notifyDataSetChanged();
+
+        final String msg = String.format(Locale.CHINA, "【%s】新获取数据 %d 条",
+                getCurrentTitle(), newsItems.size());
+        logUtil.d(this, msg);
+        ToastUtils.show(getContext(), msg);
+    }
+
+    @Override
+    public void onDataGetExecption(Exception e) {
+        logUtil.e(this, e.getMessage());
+        e.printStackTrace();
+    }
 }

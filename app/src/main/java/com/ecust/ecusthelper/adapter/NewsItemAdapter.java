@@ -21,11 +21,11 @@ import butterknife.ButterKnife;
  *
  * @author chenjj2048
  */
-public class NewsTitleDescriptionAdapter extends RecyclerView.Adapter<NewsTitleDescriptionAdapter.NewsTitleDescriptionHolder> {
-    private Context context;
-    private List<NewsItem> mList;
+public class NewsItemAdapter extends RecyclerView.Adapter<NewsItemAdapter.NewsTitleDescriptionHolder> {
+    private final List<NewsItem> mList;
+    private final Context context;
 
-    public NewsTitleDescriptionAdapter(Context context, List<NewsItem> list) {
+    public NewsItemAdapter(Context context, List<NewsItem> list) {
         Objects.requireNonNull(list);
         this.context = context;
         this.mList = list;
@@ -42,7 +42,7 @@ public class NewsTitleDescriptionAdapter extends RecyclerView.Adapter<NewsTitleD
         final NewsItem item = mList.get(position);
 
         holder.textView1.setText(item.getTitle());
-        holder.textView2.setText(item.getTime());
+        holder.textView2.setText(item.getTime() + "\r\n" + item.getUrl());
     }
 
     @Override
@@ -50,7 +50,7 @@ public class NewsTitleDescriptionAdapter extends RecyclerView.Adapter<NewsTitleD
         return mList.size();
     }
 
-    class NewsTitleDescriptionHolder extends RecyclerView.ViewHolder {
+    static class NewsTitleDescriptionHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.text1)
         TextView textView1;
         @Bind(R.id.text2)

@@ -1,12 +1,8 @@
 package com.ecust.ecusthelper.util;
 
 import android.test.AndroidTestCase;
-import android.util.Xml;
 
-import com.annimon.stream.Objects;
 import com.ecust.ecusthelper.util.network.constant.HttpConstant;
-
-import org.xmlpull.v1.XmlPullParser;
 
 import java.io.InputStream;
 import java.util.Calendar;

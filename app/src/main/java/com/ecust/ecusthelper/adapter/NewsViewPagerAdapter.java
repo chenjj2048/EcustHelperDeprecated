@@ -4,7 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.ecust.ecusthelper.consts.NewsFragmentTitleConst;
+import com.ecust.ecusthelper.consts.NewsConst;
 import com.ecust.ecusthelper.ui.news.NewsFragment;
 import com.ecust.ecusthelper.util.log.logUtil;
 
@@ -21,7 +21,7 @@ public class NewsViewPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        return NewsFragmentTitleConst.getTitle(position);
+        return NewsConst.getTitle(position);
     }
 
     @Override
@@ -33,6 +33,6 @@ public class NewsViewPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return NewsFragmentTitleConst.size();
+        return NewsConst.getCatalogCount();
     }
 }

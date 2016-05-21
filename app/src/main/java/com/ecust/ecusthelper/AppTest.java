@@ -1,8 +1,8 @@
 package com.ecust.ecusthelper;
 
-import com.ecust.ecusthelper.parser.NewsParser;
+import com.ecust.ecusthelper.bean.news.NewsPageParseResult;
+import com.ecust.ecusthelper.data.remote.NewsRemoteRepository;
 import com.ecust.ecusthelper.util.log.logUtil;
-import com.ecust.ecusthelper.util.network.httpurlconnection.HttpUrlConnectionUtil;
 
 /**
  * Created on 2016/5/12
