@@ -43,13 +43,14 @@ public class NewsParser implements Function<String, NewsPageParseResult> {
      * 解析网页内容
      *
      * @param value 网页源代码，如http://news.ecust.edu.cn/news?category_id=7
-     * @return 解析结果(错误时返回EMPTY)
+     * @return 解析结果
+     * @throws RuntimeException
      */
     @NonNull
     @Override
     public NewsPageParseResult apply(String value) {
         Objects.requireNonNull(value);
-        logUtil.d(this, "开始解析网页 共收到 " + value.length() + " 字符");
+        logUtil.d(this, "开始解析网页新闻内容 共收到 " + value.length() + " 字符");
 
         final NewsPageParseResult mResult = new NewsPageParseResult();
         Document doc = Jsoup.parse(value);
@@ -68,7 +69,7 @@ public class NewsParser implements Function<String, NewsPageParseResult> {
         for (Element li : collection_li) {
             final String title = li.select("span").last().text();
             final String time = li.getElementsByClass("time").first().text();
-            final String url = uniformUrl(NewsConst.NEWS_URL + li.select("a").attr("href"));
+            final String url = uniformUrl(NewsConst.NEWS_HOME_URL + li.select("a").attr("href"));
 
             mList.add(new NewsItem(title, time, url));
         }

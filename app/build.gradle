@@ -32,6 +32,7 @@ android {
 
 dependencies {
     testCompile 'junit:junit:4.12'
+    debugCompile 'junit:junit:4.12'
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'
@@ -49,6 +50,7 @@ dependencies {
     compile 'io.reactivex:rxandroid:1.1.0'
     compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
     compile 'com.squareup.okhttp3:okhttp:3.2.0'
-    //    compile 'com.google.guava:guava:19.0'
+    compile 'com.google.guava:guava:19.0'
     compile 'org.jsoup:jsoup:1.9.1'
+    //compile 'com.google.android:flexbox:0.1.2'
 }

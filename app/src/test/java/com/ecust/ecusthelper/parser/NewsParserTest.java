@@ -37,13 +37,12 @@ public class NewsParserTest {
     public static Collection<Object[]> data() {
         //Todo:这里NewsFragmentTitleConst.getXXX()怎么是空的！！！！！！！！！！！！！！！！！！！！！！！！1
         List<Object[]> mList = new ArrayList();
-//        for (int i = 0; i < NewsFragmentTitleConst.size(); i++) {
-//            String url = NewsFragmentTitleConst.getUrl(i);
-//            String title = NewsFragmentTitleConst.getTitle(i);
+//        for (int i = 0; i < NewsConst.getCatalogCount(); i++) {
+//            String url = NewsConst.getUrl(i);
+//            String title = NewsConst.getTitle(i);
 //            Object[] item = new Object[]{url, title};
 //            mList.add(item);
 //        }
-
         mList.add(new Object[]{"校园要闻", "http://news.ecust.edu.cn/news?important=1"});
         mList.add(new Object[]{"综合新闻", "http://news.ecust.edu.cn/news?category_id=7"});
         mList.add(new Object[]{"招生就业", "http://news.ecust.edu.cn/news?category_id=65"});
@@ -52,6 +51,7 @@ public class NewsParserTest {
         mList.add(new Object[]{"图说华理", "http://news.ecust.edu.cn/news?category_id=68"});
         mList.add(new Object[]{"媒体华理", "http://news.ecust.edu.cn/news?category_id=21"});
         mList.add(new Object[]{"通知公告", "http://news.ecust.edu.cn/notifies"});
+        mList.add(new Object[]{"学术讲座", "http://news.ecust.edu.cn/reports"});
         return mList;
     }
 

@@ -60,6 +60,7 @@ public class EcustApplication extends Application {
 
     private void setupLogger() {
         logUtil.enable(BuildConfig.DEBUG);
+        logUtil.usingSystemOutPrintlnInstead(false);
     }
 
     private void setupAndroid_Bootstrap_UI() {
