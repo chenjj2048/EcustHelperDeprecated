@@ -71,7 +71,8 @@ public class NewsParser implements Function<String, NewsPageParseResult> {
             final String time = li.getElementsByClass("time").first().text();
             final String url = uniformUrl(NewsConst.NEWS_HOME_URL + li.select("a").attr("href"));
 
-            mList.add(new NewsItem(title, time, url));
+            final NewsItem item = new NewsItem(title, time, url);
+            mList.add(item);
         }
         mResult.setItems(mList);
 

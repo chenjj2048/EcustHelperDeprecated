@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.ecust.ecusthelper.R;
+import com.ecust.ecusthelper.util.log.logUtil;
 import com.jaeger.library.StatusBarUtil;
 
 import java.lang.ref.WeakReference;
@@ -52,6 +53,7 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         weakReference = new WeakReference<>(this);
+        logUtil.d(this, "onCreate成功");
     }
 
     public void setupToolbar(Toolbar toolbar) {
@@ -62,12 +64,14 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
     public void setContentView(View view) {
         super.setContentView(view);
         ButterKnife.bind(this);
+        logUtil.d(this, "setContentView成功");
     }
 
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
         super.setContentView(layoutResID);
         ButterKnife.bind(this);
+        logUtil.d(this, "setContentView成功");
     }
 
     @Override
@@ -77,6 +81,13 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
             firstRun = false;
             this.setStatusBar();
         }
+        logUtil.d(this, "onStart成功");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        logUtil.d(this, "onPause成功");
     }
 
     @Override
@@ -94,6 +105,7 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         ButterKnife.unbind(this);
+        logUtil.d(this, "Activity onDestroy成功");
     }
 
     @SuppressWarnings("deprecation")

@@ -21,7 +21,7 @@ public interface NewsContract {
          */
         int getFragmentIndex();
 
-        void onDataNotAvailable();
+        void onDataNotAvailable(int reason);
 
         /**
          * 数据获取成功

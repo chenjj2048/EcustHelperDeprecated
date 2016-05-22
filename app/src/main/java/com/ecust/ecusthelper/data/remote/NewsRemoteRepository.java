@@ -10,7 +10,7 @@ import com.ecust.ecusthelper.data.base.Callback;
 import com.ecust.ecusthelper.data.base.IRepository;
 import com.ecust.ecusthelper.parser.NewsParser;
 import com.ecust.ecusthelper.util.log.logUtil;
-import com.ecust.ecusthelper.util.network.httpurlconnection.HttpUrlConnectionUtil;
+import com.ecust.ecusthelper.util.network.HttpUrlConnectionUtil;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -28,35 +28,36 @@ public class NewsRemoteRepository implements IRepository.IRemoteRepository<Integ
      * http://news.ecust.edu.cn/news?important=1&page=2
      */
     private final String mUrlPrefix;
+    private final int mFragmentIndex;
 
     /**
      * @param fragmentIndex 对应新闻版块的下标
      * @see NewsConst
      */
     public NewsRemoteRepository(int fragmentIndex) {
+        this.mFragmentIndex = fragmentIndex;
         this.mUrlPrefix = NewsConst.getUrl(fragmentIndex) + "&page=";
     }
 
     @NonNull
     @Override
     public String getRepositoryName() {
-        return "远程-新闻仓库";
+        return "远程-新闻仓库-" + NewsConst.getTitle(mFragmentIndex);
+    }
+
+    @Override
+    public boolean isDataExpired() {
+        return true;
     }
 
     /**
-     * @param requestPage 请求的页数
+     * @param requestPage 请求的页数(至少大于等于1)
      * @param callback    callback
      */
     @Override
     public void getData(Integer requestPage, Callback<NewsPageParseResult> callback) {
-        Objects.requireNonNull(callback);
-        if (requestPage <= 0) {
-            callback.onException(new IllegalArgumentException("页数至少大于等于1"));
-            return;
-        }
-
         final String url = mUrlPrefix + requestPage;
-        logUtil.d(this, getRepositoryName() + " - 第" + requestPage + "页 " + url);
+        logUtil.d(this, getRepositoryName() + " - 开始获取第" + requestPage + "页 " + url);
 
         //开始获取数据
         Observable.just(url)
@@ -72,8 +73,8 @@ public class NewsRemoteRepository implements IRepository.IRemoteRepository<Integ
 
                     @Override
                     public void onError(Throwable e) {
-                        callback.onException(new Exception(e));
-                        callback.onDataNotAvailable();
+                        final Exception exception = new RuntimeException(e);
+                        callback.onException(exception);
                     }
 
                     @Override

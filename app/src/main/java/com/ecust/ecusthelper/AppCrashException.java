@@ -16,9 +16,9 @@ public class AppCrashException implements Thread.UncaughtExceptionHandler {
 
     private void showCrashInformation(Thread thread, Throwable ex) {
         String msg = String.format("Throwable on Thread %s - %s", thread.getName(), ex.toString());
-        logUtil.e("未捕获的异常", msg);
+        logUtil.e(this, "【uncaughtException】" + msg);
         ex.printStackTrace();
-        System.exit(0);
+//        System.exit(0);
     }
 
     private void saveCrashInformation(Thread thread, Throwable ex) {

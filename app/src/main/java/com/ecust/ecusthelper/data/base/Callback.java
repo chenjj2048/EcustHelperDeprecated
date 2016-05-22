@@ -6,10 +6,14 @@ package com.ecust.ecusthelper.data.base;
  * @author chenjj2048
  */
 public interface Callback<Result> {
+    int REASON_DATA_STILL_VALID = 1;
+    int REASON_NO_MORE_DATA = 2;
+    int REASON_OTHERS = 3;
+
     /**
      * 网络不通等情况数据无法返回
      */
-    void onDataNotAvailable();
+    void onDataNotAvailable(int reason);
 
     /**
      * 数据正常获取
@@ -24,10 +28,4 @@ public interface Callback<Result> {
      * @param e Exception（不包含网络超时、链接不通等情况）
      */
     void onException(Exception e);
-
-    /**
-     * 到达了底部
-     */
-    default void onReachEnd() {
-    }
 }

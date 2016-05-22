@@ -11,13 +11,9 @@ public interface IRepository<Request, Result> {
     @NonNull
     String getRepositoryName();
 
-    default void getData(Request request, Callback<Result> callback) {
-        throw new UnsupportedOperationException("Override It");
-    }
+    void getData(Request request, Callback<Result> callback);
 
-    default boolean isDataExpired() {
-        return true;
-    }
+    boolean isDataExpired();
 
     interface ILocalRepository<Request, Result> extends IRepository<Request, Result> {
     }

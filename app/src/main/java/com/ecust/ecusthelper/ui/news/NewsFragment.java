@@ -15,13 +15,17 @@ import com.ecust.ecusthelper.base.BaseMvpFragment;
 import com.ecust.ecusthelper.bean.news.NewsItem;
 import com.ecust.ecusthelper.consts.NewsConst;
 import com.ecust.ecusthelper.customview.DividerItemDecoration;
+import com.ecust.ecusthelper.data.base.Callback;
 import com.ecust.ecusthelper.util.log.logUtil;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.Bind;
 import cn.trinea.android.common.util.ToastUtils;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 
 /**
  * Created on 2016/4/16
@@ -48,7 +52,9 @@ public class NewsFragment extends BaseMvpFragment<NewsContract.Presenter> implem
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_news_list, container, false);
+        final View view = inflater.inflate(R.layout.fragment_news_list, container, false);
+        logUtil.d(this, "onCreateView成功 - " + getCurrentTitle());
+        return view;
     }
 
     @Override
@@ -56,7 +62,13 @@ public class NewsFragment extends BaseMvpFragment<NewsContract.Presenter> implem
         super.onViewCreated(view, savedInstanceState);
         setupRecyclerView();
 
-        getPresenter().getLatestData();
+        //延迟加载
+        Observable.timer(1500, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe((v) -> {
+                    getPresenter().getLatestData();
+                });
+        logUtil.d(this, "onViewCreated成功 - " + getCurrentTitle());
     }
 
     private void setupRecyclerView() {
@@ -78,8 +90,19 @@ public class NewsFragment extends BaseMvpFragment<NewsContract.Presenter> implem
     }
 
     @Override
-    public void onDataNotAvailable() {
-        final String msg = "【" + getCurrentTitle() + "】" + "数据获取失败";
+    public void onDataNotAvailable(int reason) {
+        String msg = "【" + getCurrentTitle() + "】";
+        switch (reason) {
+            case Callback.REASON_DATA_STILL_VALID:
+                msg += "数据未过期，请勿频繁刷新";
+                break;
+            case Callback.REASON_NO_MORE_DATA:
+                msg += "已无更多数据";
+                break;
+            case Callback.REASON_OTHERS:
+                msg += "数据获取失败";
+                break;
+        }
         ToastUtils.show(getContext(), msg);
         logUtil.d(this, msg);
     }
@@ -96,7 +119,7 @@ public class NewsFragment extends BaseMvpFragment<NewsContract.Presenter> implem
 
     @Override
     public void onDataGetExecption(Exception e) {
-        logUtil.e(this, e.getMessage());
+        logUtil.e(this, "数据获取异常 - Cause By: " + e.getMessage());
         e.printStackTrace();
     }
 }

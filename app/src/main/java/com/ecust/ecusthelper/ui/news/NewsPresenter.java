@@ -6,6 +6,7 @@ import com.ecust.ecusthelper.adapter.NewsItemAdapter;
 import com.ecust.ecusthelper.bean.news.NewsItem;
 import com.ecust.ecusthelper.data.NewsRepository;
 import com.ecust.ecusthelper.data.base.Callback;
+import com.ecust.ecusthelper.util.log.logUtil;
 
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class NewsPresenter implements NewsContract.Presenter {
         this.view = view;
         this.mNewsRepository = new NewsRepository(view.getFragmentIndex());
         this.mAdapter = new NewsItemAdapter(view.getContext(), mNewsRepository.getList());
+        logUtil.d(this, "Presenter创建成功 - " + view.getCurrentTitle());
     }
 
     @Override
@@ -35,11 +37,12 @@ public class NewsPresenter implements NewsContract.Presenter {
      */
     @Override
     public void getLatestData() {
+        logUtil.d(this, "获取最新数据 - " + view.getCurrentTitle());
         final int FIRST_PAGE = 1;
         mNewsRepository.getData(FIRST_PAGE, new Callback<List<NewsItem>>() {
             @Override
-            public void onDataNotAvailable() {
-                view.onDataNotAvailable();
+            public void onDataNotAvailable(int reason) {
+                view.onDataNotAvailable(reason);
             }
 
             @Override
@@ -59,10 +62,11 @@ public class NewsPresenter implements NewsContract.Presenter {
      */
     @Override
     public void getMoreData() {
+        logUtil.d(this, "获取更多数据 - " + view.getCurrentTitle());
         mNewsRepository.getMoreData(new Callback<List<NewsItem>>() {
             @Override
-            public void onDataNotAvailable() {
-                view.onDataNotAvailable();
+            public void onDataNotAvailable(int reason) {
+                view.onDataNotAvailable(reason);
             }
 
             @Override

@@ -19,14 +19,16 @@ public abstract class BaseMvpFragment<P> extends BaseFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        setPresenter(createPresenter());
+        if (presenter == null)
+            setPresenter(createPresenter());
     }
 
     @CallSuper
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        setPresenter(createPresenter());
+        if (presenter == null)
+            setPresenter(createPresenter());
     }
 
     @NonNull

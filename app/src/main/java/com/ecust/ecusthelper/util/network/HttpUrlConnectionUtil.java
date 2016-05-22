@@ -1,13 +1,11 @@
-package com.ecust.ecusthelper.util.network.httpurlconnection;
+package com.ecust.ecusthelper.util.network;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
-import android.util.Log;
 
 import com.annimon.stream.Objects;
-import com.ecust.ecusthelper.util.ConvertUtil;
 import com.ecust.ecusthelper.util.IOUtils;
-import com.ecust.ecusthelper.util.network.constant.HttpConstant;
+import com.ecust.ecusthelper.util.log.logUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,6 +42,7 @@ public class HttpUrlConnectionUtil {
                                    int connectTimeoutMillis, int readTimeoutMillis) throws RuntimeException {
         Objects.requireNonNull(urlString);
         Objects.requireNonNull(encoding);
+        logUtil.d(HttpUrlConnectionUtil.class, "开始获取网络数据 - " + urlString);
         InputStream inputStream = null;
         try {
             URL url = new URL(urlString);
@@ -57,7 +56,11 @@ public class HttpUrlConnectionUtil {
             conn.setReadTimeout(readTimeoutMillis);
 
             inputStream = conn.getInputStream();
-            return ConvertUtil.inputStream2String(inputStream, encoding);
+            String result = IOUtils.inputStream2String(inputStream, encoding);
+
+            logUtil.d(HttpUrlConnectionUtil.class, "网络数据返回成功,共" + result.length() + "字节");
+
+            return result;
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {

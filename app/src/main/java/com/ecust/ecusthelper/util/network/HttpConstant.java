@@ -1,4 +1,4 @@
-package com.ecust.ecusthelper.util.network.constant;
+package com.ecust.ecusthelper.util.network;
 
 import java.util.concurrent.TimeUnit;
 

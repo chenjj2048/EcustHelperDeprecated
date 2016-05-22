@@ -5,10 +5,12 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
 import com.ecust.ecusthelper.R;
 import com.ecust.ecusthelper.adapter.NewsViewPagerAdapter;
 import com.ecust.ecusthelper.base.BaseAppCompatActivity;
+import com.ecust.ecusthelper.util.log.logUtil;
 
 import butterknife.Bind;
 

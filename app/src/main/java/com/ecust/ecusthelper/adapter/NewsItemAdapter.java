@@ -41,8 +41,8 @@ public class NewsItemAdapter extends RecyclerView.Adapter<NewsItemAdapter.NewsTi
     public void onBindViewHolder(NewsTitleDescriptionHolder holder, int position) {
         final NewsItem item = mList.get(position);
 
-        holder.textView1.setText(item.getTitle());
-        holder.textView2.setText(item.getTime() + "\r\n" + item.getUrl());
+        holder.title.setText(item.getTitle());
+        holder.time.setText(item.getTime());
     }
 
     @Override
@@ -51,10 +51,12 @@ public class NewsItemAdapter extends RecyclerView.Adapter<NewsItemAdapter.NewsTi
     }
 
     static class NewsTitleDescriptionHolder extends RecyclerView.ViewHolder {
-        @Bind(R.id.text1)
-        TextView textView1;
-        @Bind(R.id.text2)
-        TextView textView2;
+        @Bind(R.id.title)
+        TextView title;
+        @Bind(R.id.time)
+        TextView time;
+        @Bind(R.id.timediff)
+        TextView timeDiff;
 
         public NewsTitleDescriptionHolder(View itemView) {
             super(itemView);

@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import android.os.StrictMode;
 
-import com.beardedhen.androidbootstrap.TypefaceProvider;
 import com.ecust.ecusthelper.util.log.logUtil;
 import com.squareup.leakcanary.LeakCanary;
 
@@ -27,8 +26,7 @@ public class EcustApplication extends Application {
         setupLogger();
         setupUncaughtException();
         setupLeakCanary();
-        setupAndroid_Bootstrap_UI();
-        setupStrictMode();
+        //setupStrictMode();
     }
 
     private void setupStrictMode() {
@@ -61,9 +59,5 @@ public class EcustApplication extends Application {
     private void setupLogger() {
         logUtil.enable(BuildConfig.DEBUG);
         logUtil.usingSystemOutPrintlnInstead(false);
-    }
-
-    private void setupAndroid_Bootstrap_UI() {
-        TypefaceProvider.registerDefaultIconSets();
     }
 }

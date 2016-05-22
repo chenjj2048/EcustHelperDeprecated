@@ -2,7 +2,6 @@ package com.ecust.ecusthelper.data;
 
 import android.support.annotation.NonNull;
 
-import com.annimon.stream.Objects;
 import com.ecust.ecusthelper.bean.news.NewsItem;
 import com.ecust.ecusthelper.bean.news.NewsPageParseResult;
 import com.ecust.ecusthelper.consts.NewsConst;
@@ -62,6 +61,11 @@ public class NewsRepository extends BaseLocalRemoteRepository<Integer, List<News
         return "新闻仓库 - " + NewsConst.getTitle(mFragmentIndex);
     }
 
+    @Override
+    public boolean isDataExpired() {
+        return true;
+    }
+
     /**
      * 获取下一页数据
      *
@@ -70,7 +74,7 @@ public class NewsRepository extends BaseLocalRemoteRepository<Integer, List<News
     public void getMoreData(Callback<List<NewsItem>> callback) {
         if (nextPosition > maxPosition) {
             //数据到达底部
-            callback.onReachEnd();
+            callback.onDataNotAvailable(Callback.REASON_NO_MORE_DATA);
             return;
         }
         getData(nextPosition, callback);
@@ -84,6 +88,8 @@ public class NewsRepository extends BaseLocalRemoteRepository<Integer, List<News
      */
     @Override
     public void getData(Integer requestPage, Callback<List<NewsItem>> callback) {
+        final String TAG = getRepositoryName() + " 第 " + requestPage + " 页";
+        logUtil.d(this, TAG + " - 准备获取数据");
         //设置运行状态
         if (isRunning) {
             logUtil.d(this, getRepositoryName() + " - 请勿重复运行");
@@ -94,41 +100,45 @@ public class NewsRepository extends BaseLocalRemoteRepository<Integer, List<News
 
         //数据是否过期
         if (!getLocalRepository().isDataExpired()) {
-            callback.onDataNotAvailable();
+            logUtil.d(this, TAG + " - 数据未过期仍有效");
+            callback.onDataNotAvailable(Callback.REASON_DATA_STILL_VALID);
             isRunning = false;
             return;
         }
 
-        //远程库里拉数据
+        logUtil.d(this, TAG + " - 开始获取远程数据");
         getRemoteRepository().getData(requestPage, new Callback<NewsPageParseResult>() {
             @Override
-            public void onDataNotAvailable() {
-                //远程数据获取失败，看本地有没有数据
+            public void onDataNotAvailable(int reason) {
+                logUtil.d(this, TAG + " - 远程数据获取失败，开始获取本地数据");
                 getLocalRepository().getData(null, new Callback<List<NewsItem>>() {
                     @Override
-                    public void onDataNotAvailable() {
-                        callback.onDataNotAvailable();
+                    public void onDataNotAvailable(int reason) {
+                        logUtil.d(this, TAG + " - 本地数据不可得");
+                        callback.onDataNotAvailable(reason);
+                        isRunning = false;
                     }
 
                     @Override
                     public void onDataArrived(List<NewsItem> newsItems) {
+                        logUtil.d(this, TAG + " - 本地数据获取成功，共" + newsItems.size() + "条");
                         mergeDataAndSaveToLocal(newsItems);
                         callback.onDataArrived(mList);
+                        isRunning = false;
                     }
 
                     @Override
                     public void onException(Exception e) {
+                        logUtil.d(this, TAG + " - 本地数据获取异常 " + e.getMessage());
                         callback.onException(e);
-                        callback.onDataNotAvailable();
+                        isRunning = false;
                     }
                 });
-                isRunning = false;
             }
 
             @Override
             public void onDataArrived(NewsPageParseResult result) {
-                //远程数据获取成功
-                Objects.requireNonNull(result);
+                logUtil.d(this, TAG + " - 远程数据获取成功，共" + result.getItems().size() + "条");
                 mergeDataAndSaveToLocal(result.getItems());
                 refreshPosition(result.getCurrentPosition(), result.getTailPosition());
                 callback.onDataArrived(mList);
@@ -137,8 +147,8 @@ public class NewsRepository extends BaseLocalRemoteRepository<Integer, List<News
 
             @Override
             public void onException(Exception e) {
+                logUtil.d(this, TAG + " - 远程数据获取异常 " + e.getMessage());
                 callback.onException(e);
-                callback.onDataNotAvailable();
                 isRunning = false;
             }
         });

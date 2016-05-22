@@ -1,6 +1,6 @@
 package com.ecust.ecusthelper.util.network.httpurlconnection;
 
-import android.util.Pair;
+import com.ecust.ecusthelper.util.network.HttpUrlConnectionUtil;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

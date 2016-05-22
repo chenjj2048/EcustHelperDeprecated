@@ -1,7 +1,7 @@
 package com.ecust.ecusthelper.parser;
 
 import com.ecust.ecusthelper.bean.news.NewsPageParseResult;
-import com.ecust.ecusthelper.util.network.httpurlconnection.HttpUrlConnectionUtil;
+import com.ecust.ecusthelper.util.network.HttpUrlConnectionUtil;
 
 import org.junit.Before;
 import org.junit.Test;

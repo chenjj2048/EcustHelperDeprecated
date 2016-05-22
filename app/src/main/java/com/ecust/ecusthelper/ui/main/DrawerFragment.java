@@ -81,6 +81,7 @@ public class DrawerFragment extends BaseFragment {
         public class SchoolInformationMenulHandler extends ResponsibleOfChain<MenuItem> {
             @Override
             protected boolean handlerItem(MenuItem data) {
+                //Todo:        data.getGroupId();
                 switch (data.getItemId()) {
                     case R.id.menu_information_news:
                         startNewActivityByClass(NewsActivity.class);

@@ -19,32 +19,5 @@
         android:layout_height="wrap_content"
         android:text="1234" />
 
-    <com.beardedhen.androidbootstrap.BootstrapWell
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
 
-        android:layout_gravity="center"
-        android:layout_margin="8dp"
-        app:bootstrapSize="xl">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:text="Look, I'm in a large well222!" />
-    </com.beardedhen.androidbootstrap.BootstrapWell>
-
-    <com.beardedhen.androidbootstrap.BootstrapWell
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_margin="8dp"
-        app:bootstrapSize="xl">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:text="Look, I'm in a large well222!" />
-    </com.beardedhen.androidbootstrap.BootstrapWell>
 </LinearLayout>

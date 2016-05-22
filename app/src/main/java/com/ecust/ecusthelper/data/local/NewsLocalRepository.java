@@ -28,7 +28,12 @@ public class NewsLocalRepository implements IRepository.ILocalRepository<Void, L
      */
     @Override
     public void getData(Void aVoid, Callback<List<NewsItem>> callback) {
-        callback.onDataNotAvailable();
+        callback.onDataNotAvailable(Callback.REASON_OTHERS);
+    }
+
+    @Override
+    public boolean isDataExpired() {
+        return true;
     }
 
     public void saveItem(NewsItem item) {
