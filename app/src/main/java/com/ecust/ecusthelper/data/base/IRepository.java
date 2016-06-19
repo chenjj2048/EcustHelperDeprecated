@@ -14,10 +14,4 @@ public interface IRepository<Request, Result> {
     void getData(Request request, Callback<Result> callback);
 
     boolean isDataExpired();
-
-    interface ILocalRepository<Request, Result> extends IRepository<Request, Result> {
-    }
-
-    interface IRemoteRepository<Request, Result> extends IRepository<Request, Result> {
-    }
 }

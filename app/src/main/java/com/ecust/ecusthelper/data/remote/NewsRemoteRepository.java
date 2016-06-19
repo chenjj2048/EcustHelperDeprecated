@@ -22,7 +22,7 @@ import rx.schedulers.Schedulers;
  *
  * @author chenjj2048
  */
-public class NewsRemoteRepository implements IRepository.IRemoteRepository<Integer, NewsPageParseResult> {
+public class NewsRemoteRepository implements IRepository<Integer, NewsPageParseResult> {
     /**
      * 实际网页地址类似于如下格式：xxxx + "&page=" + 页数
      * http://news.ecust.edu.cn/news?important=1&page=2

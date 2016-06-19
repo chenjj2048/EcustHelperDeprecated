@@ -5,7 +5,7 @@ package com.ecust.ecusthelper.util.design.pattern;
  *
  * @author chenjj2048
  */
-@SuppressWarnings("unused")
+//Todo:干么要这个！以后换
 public abstract class ResponsibleOfChain<T> {
     private ResponsibleOfChain<T> successor;
 

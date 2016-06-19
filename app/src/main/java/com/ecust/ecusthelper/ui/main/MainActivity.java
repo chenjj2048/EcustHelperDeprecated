@@ -6,21 +6,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 
 import com.annimon.stream.Objects;
 import com.ecust.ecusthelper.R;
-import com.ecust.ecusthelper.base.BaseMvpActivity;
+import com.ecust.ecusthelper.baseAndCommon.BaseMvpActivity;
 import com.ecust.ecusthelper.ui.news.NewsActivity;
-import com.ecust.ecusthelper.util.log.logUtil;
-import com.ecust.ecusthelper.util.network.HttpUrlConnectionUtil;
 import com.ecust.ecusthelper.util.ui.DrawerUtil;
 import com.jaeger.library.StatusBarUtil;
-
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 //Todo:以后加轮循、CordinderLayout、视差动画、天气
 public class MainActivity extends BaseMvpActivity<MainContract.Presenter> implements MainContract.View {

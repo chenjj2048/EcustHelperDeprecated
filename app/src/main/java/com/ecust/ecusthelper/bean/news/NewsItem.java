@@ -16,19 +16,45 @@ import java.util.Date;
  * @author chenjj2048
  */
 public final class NewsItem implements Comparable<NewsItem> {
+    private static final String NEWS_URL_PREFFIX = "http://news.ecust.edu.cn/news/";
     private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private final String title;
     private final String rawTimeString;
-    private final String url;
+    private final String shorturl;
     private final long timeValue;
     private final int hash;
 
     public NewsItem(String title, String time, String url) {
         this.timeValue = parseTimeValue(time);
         this.title = title;
-        this.url = url;
+        this.shorturl = createShortUrl(url);
         this.rawTimeString = time;
         this.hash = hashCode();
+    }
+
+    /**
+     * 恢复长地址
+     */
+    @NonNull
+    private String getShortUrl() {
+        String url;
+        if (!shorturl.contains("http://"))
+            url = NEWS_URL_PREFFIX + shorturl;
+        else
+            url = shorturl;
+
+        logUtil.e("shorturl", shorturl + " " + url);
+        return url;
+    }
+
+    /**
+     * 转换短地址，节省空间
+     */
+    @NonNull
+    private String createShortUrl(String url) {
+        if (url.contains(NEWS_URL_PREFFIX))
+            url = url.replace(NEWS_URL_PREFFIX, "");
+        return url;
     }
 
     /**
@@ -56,7 +82,11 @@ public final class NewsItem implements Comparable<NewsItem> {
     }
 
     public String getUrl() {
-        return url;
+        return getShortUrl();
+    }
+
+    public long getTimeValue() {
+        return timeValue;
     }
 
     @Override
@@ -64,22 +94,21 @@ public final class NewsItem implements Comparable<NewsItem> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        NewsItem newsItem = (NewsItem) o;
+        NewsItem item = (NewsItem) o;
 
-        if (timeValue != newsItem.timeValue) return false;
-        if (!title.equals(newsItem.title)) return false;
-        if (!rawTimeString.equals(newsItem.rawTimeString)) return false;
-        return url.equals(newsItem.url);
+        if (timeValue != item.timeValue) return false;
+        if (!title.equals(item.title)) return false;
+        if (!rawTimeString.equals(item.rawTimeString)) return false;
+        return shorturl.equals(item.shorturl);
 
     }
 
     @Override
     public int hashCode() {
         if (hash != 0) return hash;
-
         int result = title.hashCode();
         result = 31 * result + rawTimeString.hashCode();
-        result = 31 * result + url.hashCode();
+        result = 31 * result + shorturl.hashCode();
         result = 31 * result + (int) (timeValue ^ (timeValue >>> 32));
         return result;
     }

@@ -2,35 +2,42 @@ package com.ecust.ecusthelper.data;
 
 import android.support.annotation.NonNull;
 
+import com.annimon.stream.Objects;
 import com.ecust.ecusthelper.bean.news.NewsItem;
 import com.ecust.ecusthelper.bean.news.NewsPageParseResult;
 import com.ecust.ecusthelper.consts.NewsConst;
-import com.ecust.ecusthelper.data.base.BaseLocalRemoteRepository;
 import com.ecust.ecusthelper.data.base.Callback;
+import com.ecust.ecusthelper.data.base.IRepository;
 import com.ecust.ecusthelper.data.local.NewsLocalRepository;
 import com.ecust.ecusthelper.data.remote.NewsRemoteRepository;
+import com.ecust.ecusthelper.di.compent.DaggerNewsRepositoryCompent;
+import com.ecust.ecusthelper.di.module.NewsRepositoryModule;
 import com.ecust.ecusthelper.util.log.logUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 /**
  * Created on 2016/5/11
  *
  * @author chenjj2048
  */
-public class NewsRepository extends BaseLocalRemoteRepository<Integer, List<NewsItem>,
-        NewsLocalRepository, NewsRemoteRepository> {
-    private final int mFragmentIndex;
-    private final List<NewsItem> mList;
-
+public final class NewsRepository implements IRepository<Integer, List<NewsItem>> {
+    private final List<NewsItem> mList = new ArrayList<>();
+    @Inject
+    int mFragmentIndex;
+    @Inject
+    NewsLocalRepository mLocalRepository;
+    @Inject
+    NewsRemoteRepository mRemoteRepository;
     private boolean isRunning;
     /**
      * 网页中下一个要读取的页数，初始默认为1
      */
     private int nextPosition = 1;
-
     /**
      * 网页中能获取到数据的最大页数，初始默认为1
      */
@@ -41,18 +48,12 @@ public class NewsRepository extends BaseLocalRemoteRepository<Integer, List<News
      * @see NewsConst
      */
     public NewsRepository(int fragmentIndex) {
-        mFragmentIndex = fragmentIndex;
-        mList = new ArrayList<>();
-    }
-
-    @Override
-    protected NewsRemoteRepository createRemoteRepository() {
-        return new NewsRemoteRepository(mFragmentIndex);
-    }
-
-    @Override
-    protected NewsLocalRepository createLocalRepository() {
-        return new NewsLocalRepository();
+        DaggerNewsRepositoryCompent.builder()
+                .newsRepositoryModule(new NewsRepositoryModule(fragmentIndex))
+                .build()
+                .inject(this);
+        Objects.requireNonNull(mLocalRepository);
+        Objects.requireNonNull(mRemoteRepository);
     }
 
     @NonNull
@@ -99,7 +100,7 @@ public class NewsRepository extends BaseLocalRemoteRepository<Integer, List<News
         }
 
         //数据是否过期
-        if (!getLocalRepository().isDataExpired()) {
+        if (!mLocalRepository.isDataExpired()) {
             logUtil.d(this, TAG + " - 数据未过期仍有效");
             callback.onDataNotAvailable(Callback.REASON_DATA_STILL_VALID);
             isRunning = false;
@@ -107,11 +108,11 @@ public class NewsRepository extends BaseLocalRemoteRepository<Integer, List<News
         }
 
         logUtil.d(this, TAG + " - 开始获取远程数据");
-        getRemoteRepository().getData(requestPage, new Callback<NewsPageParseResult>() {
+        mRemoteRepository.getData(requestPage, new Callback<NewsPageParseResult>() {
             @Override
             public void onDataNotAvailable(int reason) {
                 logUtil.d(this, TAG + " - 远程数据获取失败，开始获取本地数据");
-                getLocalRepository().getData(null, new Callback<List<NewsItem>>() {
+                mLocalRepository.getData(null, new Callback<List<NewsItem>>() {
                     @Override
                     public void onDataNotAvailable(int reason) {
                         logUtil.d(this, TAG + " - 本地数据不可得");
@@ -182,9 +183,9 @@ public class NewsRepository extends BaseLocalRemoteRepository<Integer, List<News
             //合并数据
             mList.add(item);
             //缓存数据
-            getLocalRepository().saveItem(item);
+            mLocalRepository.saveItem(item);
         }
-        Collections.sort(mList);
+        Collections.sort(mList, Collections.reverseOrder());
     }
 
     public List<NewsItem> getList() {

@@ -1,4 +1,4 @@
-package com.ecust.ecusthelper.base;
+package com.ecust.ecusthelper.baseAndCommon;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;

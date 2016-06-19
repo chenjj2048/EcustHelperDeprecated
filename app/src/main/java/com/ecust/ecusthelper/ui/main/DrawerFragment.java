@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.ecust.ecusthelper.R;
-import com.ecust.ecusthelper.base.BaseFragment;
+import com.ecust.ecusthelper.baseAndCommon.BaseFragment;
 import com.ecust.ecusthelper.ui.about.AboutActivity;
 import com.ecust.ecusthelper.ui.news.NewsActivity;
 import com.ecust.ecusthelper.util.design.pattern.ResponsibleOfChain;

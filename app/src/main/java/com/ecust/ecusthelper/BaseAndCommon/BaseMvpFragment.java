@@ -1,4 +1,4 @@
-package com.ecust.ecusthelper.base;
+package com.ecust.ecusthelper.baseAndCommon;
 
 import android.app.Activity;
 import android.content.Context;
@@ -19,20 +19,20 @@ public abstract class BaseMvpFragment<P> extends BaseFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if (presenter == null)
-            setPresenter(createPresenter());
     }
 
     @CallSuper
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (presenter == null)
-            setPresenter(createPresenter());
     }
 
     @NonNull
     protected P getPresenter() {
+        if (presenter == null) {
+            presenter = createPresenter();
+            setPresenter(presenter);
+        }
         return Objects.requireNonNull(presenter);
     }
 

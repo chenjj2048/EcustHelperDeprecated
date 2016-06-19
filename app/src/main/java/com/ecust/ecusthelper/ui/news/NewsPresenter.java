@@ -6,9 +6,13 @@ import com.ecust.ecusthelper.adapter.NewsItemAdapter;
 import com.ecust.ecusthelper.bean.news.NewsItem;
 import com.ecust.ecusthelper.data.NewsRepository;
 import com.ecust.ecusthelper.data.base.Callback;
+import com.ecust.ecusthelper.di.compent.DaggerNewsPresenterCompent;
+import com.ecust.ecusthelper.di.module.NewsPresenterModule;
 import com.ecust.ecusthelper.util.log.logUtil;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 /**
  * Created on 2016/4/24
@@ -16,14 +20,18 @@ import java.util.List;
  * @author chenjj2048
  */
 public class NewsPresenter implements NewsContract.Presenter {
-    private final NewsItemAdapter mAdapter;
-    private final NewsContract.View view;
-    private final NewsRepository mNewsRepository;
+    @Inject
+    NewsItemAdapter mAdapter;
+    @Inject
+    NewsContract.IView view;
+    @Inject
+    NewsRepository mNewsRepository;
 
-    public NewsPresenter(NewsContract.View view) {
-        this.view = view;
-        this.mNewsRepository = new NewsRepository(view.getFragmentIndex());
-        this.mAdapter = new NewsItemAdapter(view.getContext(), mNewsRepository.getList());
+    public NewsPresenter(NewsContract.IView view) {
+        DaggerNewsPresenterCompent.builder()
+                .newsPresenterModule(new NewsPresenterModule(view))
+                .build()
+                .inject(this);
         logUtil.d(this, "Presenter创建成功 - " + view.getCurrentTitle());
     }
 
@@ -38,21 +46,26 @@ public class NewsPresenter implements NewsContract.Presenter {
     @Override
     public void getLatestData() {
         logUtil.d(this, "获取最新数据 - " + view.getCurrentTitle());
+
         final int FIRST_PAGE = 1;
         mNewsRepository.getData(FIRST_PAGE, new Callback<List<NewsItem>>() {
             @Override
             public void onDataNotAvailable(int reason) {
+                stopSwipeRefreshing();
                 view.onDataNotAvailable(reason);
             }
 
             @Override
             public void onDataArrived(List<NewsItem> newsItems) {
-                view.onDataArrived(true, newsItems);
+                stopSwipeRefreshing();
+                mAdapter.notifyDataSetChanged();
+                view.onDataArrived(newsItems);
             }
 
             @Override
             public void onException(Exception e) {
-                view.onDataGetExecption(e);
+                stopSwipeRefreshing();
+                view.onDataGetException(e);
             }
         });
     }
@@ -71,13 +84,18 @@ public class NewsPresenter implements NewsContract.Presenter {
 
             @Override
             public void onDataArrived(List<NewsItem> newsItems) {
-                view.onDataArrived(false, newsItems);
+                mAdapter.notifyDataSetChanged();
+                view.onDataArrived(newsItems);
             }
 
             @Override
             public void onException(Exception e) {
-                view.onDataGetExecption(e);
+                view.onDataGetException(e);
             }
         });
+    }
+
+    private void stopSwipeRefreshing() {
+        view.stopSwipeRefreshing();
     }
 }

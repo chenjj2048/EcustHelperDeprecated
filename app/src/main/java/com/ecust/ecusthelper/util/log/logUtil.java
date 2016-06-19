@@ -8,7 +8,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.ecust.ecusthelper.BuildConfig;
-import com.ecust.ecusthelper.base.BaseAppCompatActivity;
+import com.ecust.ecusthelper.baseAndCommon.BaseAppCompatActivity;
 
 /**
  * Created on 2016/3/21
@@ -44,7 +44,14 @@ public final class logUtil {
 
         if (TextUtils.isEmpty(result))
             result = "TAG";
-        return result;
+        return getTagPreffix() + result;
+    }
+
+    /**
+     * 加前缀，用于AS里搜索过滤掉系统日志
+     */
+    private static String getTagPreffix() {
+        return "MyLog-";
     }
 
     public static void v(String tag, String msg) {

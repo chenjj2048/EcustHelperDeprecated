@@ -14,7 +14,7 @@ import java.util.List;
  * @author chenjj2048
  */
 //Todo:以后来写本地缓存
-public class NewsLocalRepository implements IRepository.ILocalRepository<Void, List<NewsItem>> {
+public class NewsLocalRepository implements IRepository<Void, List<NewsItem>> {
     @NonNull
     @Override
     public String getRepositoryName() {

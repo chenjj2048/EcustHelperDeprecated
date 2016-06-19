@@ -3,7 +3,7 @@ package com.ecust.ecusthelper.ui.about;
 import android.os.Bundle;
 
 import com.ecust.ecusthelper.R;
-import com.ecust.ecusthelper.base.BaseAppCompatActivity;
+import com.ecust.ecusthelper.baseAndCommon.BaseAppCompatActivity;
 
 public class AboutActivity extends BaseAppCompatActivity {
 
