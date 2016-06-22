@@ -10,9 +10,7 @@ import android.widget.TextView;
 import com.annimon.stream.Objects;
 import com.ecust.ecusthelper.R;
 import com.ecust.ecusthelper.bean.news.NewsItem;
-import com.ecust.ecusthelper.util.RelativeDateFormat;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -24,14 +22,12 @@ import butterknife.ButterKnife;
  *
  * @author chenjj2048
  */
-public class NewsItemAdapter extends RecyclerView.Adapter {
+public class NewsItemAdapter extends RecyclerView.Adapter implements View.OnClickListener {
     private static final int VIEW_TYPE_ITEM = 0;
     private static final int VIEW_TYPE_FOOTER = 1;
-
-    private static final RelativeDateFormat relativeDate = new RelativeDateFormat(
-            new SimpleDateFormat("yyyy-MM-dd"), false);
     private final List<NewsItem> mList;
     private final Context context;
+    private OnRecyclerViewItemClickListener mListener;
 
     public NewsItemAdapter(Context context, List<NewsItem> list) {
         Objects.requireNonNull(context);
@@ -54,9 +50,11 @@ public class NewsItemAdapter extends RecyclerView.Adapter {
         switch (viewType) {
             case VIEW_TYPE_ITEM:
                 view = inflater.inflate(R.layout.item_news_description, parent, false);
-                return new NewsTitleDescriptionHolder(view);
+                //绑定Item点击事件
+                view.setOnClickListener(this);
+                return new ContentHolder(view);
             case VIEW_TYPE_FOOTER:
-                view = inflater.inflate(R.layout.footer_loading, parent, false);
+                view = inflater.inflate(R.layout.item_footer_loading, parent, false);
                 return new FooterHolder(view);
             default:
                 throw new NoSuchElementException();
@@ -65,21 +63,13 @@ public class NewsItemAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewholder, int position) {
-        switch (getItemViewType(position)) {
-            case VIEW_TYPE_ITEM:
-                final NewsItem item = mList.get(position);
-                final NewsTitleDescriptionHolder holder = (NewsTitleDescriptionHolder) viewholder;
+        if (viewholder instanceof ContentHolder){
+            final ContentHolder holder = (ContentHolder) viewholder;
+            final NewsItem item = mList.get(position);
 
-                final String relativeTime = relativeDate.parseDateAndTime(item.getTimeValue());
-
-                holder.title.setText(item.getTitle());
-                holder.time.setText(item.getTime());
-                holder.relativeTime.setText(relativeTime);
-                break;
-            case VIEW_TYPE_FOOTER:
-                break;
-            default:
-                throw new NoSuchElementException();
+            holder.title.setText(item.getTitle());
+            holder.time.setText(item.getTime());
+            holder.relativeTime.setText(item.getRelativeTime());
         }
     }
 
@@ -89,7 +79,24 @@ public class NewsItemAdapter extends RecyclerView.Adapter {
         return mList.size() + 1;
     }
 
-    static class NewsTitleDescriptionHolder extends RecyclerView.ViewHolder {
+    @Override
+    public void onClick(View v) {
+        if (mListener != null) {
+            final ContentHolder holder = (ContentHolder) v.getTag();
+            final int pos = holder.getLayoutPosition();
+            mListener.onItemClick(v, mList.get(pos), pos);
+        }
+    }
+
+    public void setOnItemClickListener(OnRecyclerViewItemClickListener listener) {
+        this.mListener = listener;
+    }
+
+    public interface OnRecyclerViewItemClickListener {
+        void onItemClick(View v, NewsItem newsItem, int pos);
+    }
+
+    static class ContentHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.title)
         TextView title;
         @Bind(R.id.time)
@@ -97,9 +104,10 @@ public class NewsItemAdapter extends RecyclerView.Adapter {
         @Bind(R.id.relativeTime)
         TextView relativeTime;
 
-        public NewsTitleDescriptionHolder(View itemView) {
+        public ContentHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            itemView.setTag(this);
         }
     }
 

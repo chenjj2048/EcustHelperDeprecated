@@ -1,4 +1,4 @@
-package com.ecust.ecusthelper.parser;
+package com.ecust.ecusthelper.data.parser;
 
 import android.support.annotation.NonNull;
 

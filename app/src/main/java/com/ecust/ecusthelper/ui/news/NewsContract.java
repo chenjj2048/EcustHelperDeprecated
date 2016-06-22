@@ -29,6 +29,7 @@ public interface NewsContract {
 
         void stopSwipeRefreshing();
 
+        void startNewsDetailActivity(NewsItem newsItem);
     }
 
     interface Presenter {

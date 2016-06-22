@@ -17,11 +17,13 @@ public abstract class BaseMvpActivity<P> extends BaseAppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setPresenter(createPresenter());
     }
 
     @NonNull
     protected P getPresenter() {
+        if (presenter == null) {
+            setPresenter(createPresenter());
+        }
         return Objects.requireNonNull(presenter);
     }
 

@@ -1,5 +1,6 @@
 package com.ecust.ecusthelper.ui.news;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,6 +19,7 @@ import com.ecust.ecusthelper.bean.news.NewsItem;
 import com.ecust.ecusthelper.consts.NewsConst;
 import com.ecust.ecusthelper.customview.DividerItemDecoration;
 import com.ecust.ecusthelper.data.base.Callback;
+import com.ecust.ecusthelper.ui.newsdetail.NewsDetailActivity;
 import com.ecust.ecusthelper.util.SizeUtil;
 import com.ecust.ecusthelper.util.log.logUtil;
 
@@ -108,6 +110,15 @@ public class NewsFragment extends BaseMvpFragment<NewsContract.Presenter> implem
     public void onDetach() {
         super.onDetach();
         logUtil.v(this, getCurrentTitle() + " - onDetach");
+    }
+
+    @Override
+    public void startNewsDetailActivity(NewsItem newsItem) {
+        Intent intent = new Intent();
+        intent.setClass(getActivity(), NewsDetailActivity.class);
+        intent.putExtra(NewsDetailActivity.INTENT_KEY_DATA, newsItem);
+        intent.putExtra(NewsDetailActivity.INTENT_KEY_CATALOG,getCurrentTitle());
+        startActivity(intent);
     }
 
     /**

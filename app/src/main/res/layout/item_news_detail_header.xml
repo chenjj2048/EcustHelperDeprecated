@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp">
+
+    <!--校园要闻-->
+    <TextView
+        android:id="@+id/news_detail_section"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/news_catalog_name_background"
+        android:padding="4dp"
+        android:textColor="@android:color/white" />
+
+    <!--新闻标题-->
+    <TextView
+        android:id="@+id/news_detail_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black" />
+
+    <!--新闻信息-->
+    <TextView
+        android:id="@+id/news_detail_moreinfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:layout_marginTop="8dp" />
+
+    <!--新闻时间-->
+    <TextView
+        android:id="@+id/news_detail_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <!--细的分割线-->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="6dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/holo_blue_dark" />
+</LinearLayout>

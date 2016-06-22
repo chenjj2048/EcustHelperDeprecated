@@ -1,10 +1,12 @@
 package com.ecust.ecusthelper.bean.news;
 
+import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 
+import com.ecust.ecusthelper.util.RelativeDateFormat;
 import com.ecust.ecusthelper.util.log.logUtil;
 
-import java.text.DateFormat;
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -15,11 +17,25 @@ import java.util.Date;
  *
  * @author chenjj2048
  */
-public final class NewsItem implements Comparable<NewsItem> {
+public final class NewsItem implements Comparable<NewsItem>, Serializable {
+    private static final long serialVersionUID = 12305938204985L;
+
+    @SuppressLint("SimpleDateFormat")
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private static final RelativeDateFormat relativeDate = new RelativeDateFormat(dateFormat, false);
     private static final String NEWS_URL_PREFFIX = "http://news.ecust.edu.cn/news/";
-    private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+    /**
+     * 标题
+     */
     private final String title;
+    /**
+     * 时间
+     */
     private final String rawTimeString;
+    /**
+     * 网络地址
+     */
     private final String shorturl;
     private final long timeValue;
     private final int hash;
@@ -43,7 +59,7 @@ public final class NewsItem implements Comparable<NewsItem> {
         else
             url = shorturl;
 
-        logUtil.e("shorturl", shorturl + " " + url);
+        logUtil.v("shorturl", shorturl + " " + url);
         return url;
     }
 
@@ -85,10 +101,6 @@ public final class NewsItem implements Comparable<NewsItem> {
         return getShortUrl();
     }
 
-    public long getTimeValue() {
-        return timeValue;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -115,6 +127,22 @@ public final class NewsItem implements Comparable<NewsItem> {
 
     @Override
     public int compareTo(@NonNull NewsItem another) {
-        return (int) (this.timeValue - another.timeValue);
+        long delta = this.timeValue - another.timeValue;
+        /**
+         * 直接return (int)delta会产生错误，一部分数据转型后被截断，大小比较错误
+         */
+        if (delta > 0)
+            return 1;
+        else if (delta < 0)
+            return -1;
+        else
+            return 0;
+    }
+
+    /**
+     * @return 几天前等字样
+     */
+    public String getRelativeTime() {
+        return relativeDate.parseDateAndTime(timeValue);
     }
 }

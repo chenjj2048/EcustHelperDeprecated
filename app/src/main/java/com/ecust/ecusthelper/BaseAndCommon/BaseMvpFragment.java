@@ -30,8 +30,7 @@ public abstract class BaseMvpFragment<P> extends BaseFragment {
     @NonNull
     protected P getPresenter() {
         if (presenter == null) {
-            presenter = createPresenter();
-            setPresenter(presenter);
+            setPresenter(createPresenter());
         }
         return Objects.requireNonNull(presenter);
     }

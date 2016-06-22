@@ -8,7 +8,7 @@ import com.ecust.ecusthelper.bean.news.NewsPageParseResult;
 import com.ecust.ecusthelper.consts.NewsConst;
 import com.ecust.ecusthelper.data.base.Callback;
 import com.ecust.ecusthelper.data.base.IRepository;
-import com.ecust.ecusthelper.parser.NewsParser;
+import com.ecust.ecusthelper.data.parser.NewsParser;
 import com.ecust.ecusthelper.util.log.logUtil;
 import com.ecust.ecusthelper.util.network.HttpUrlConnectionUtil;
 

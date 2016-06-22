@@ -10,6 +10,10 @@ import android.util.Log;
 import com.ecust.ecusthelper.BuildConfig;
 import com.ecust.ecusthelper.baseAndCommon.BaseAppCompatActivity;
 
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+
 /**
  * Created on 2016/3/21
  *
@@ -78,16 +82,24 @@ public final class logUtil {
         if (checkValid(tag) && checkValid(msg))
             mLog.e(tag, msg);
     }
-
+//todo
     public static void dialog(String str) {
         if (!mGlobalEnable || !BuildConfig.DEBUG) return;
         final Context context = BaseAppCompatActivity.getCurrentActivity();
         if (context != null) {
-            AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
-            mBuilder.setTitle("日志")
-                    .setMessage(str)
-                    .create()
-                    .show();
+            Observable.just(null)
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Action1<Object>() {
+                        @Override
+                        public void call(Object o) {
+                            AlertDialog.Builder mBuilder = new AlertDialog.Builder(context);
+                            mBuilder.setTitle("日志")
+                                    .setMessage(str)
+                                    .create()
+                                    .show();
+                        }
+                    });
+
         }
     }
 

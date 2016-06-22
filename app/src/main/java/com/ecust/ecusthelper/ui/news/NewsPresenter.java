@@ -1,6 +1,7 @@
 package com.ecust.ecusthelper.ui.news;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import com.ecust.ecusthelper.adapter.NewsItemAdapter;
 import com.ecust.ecusthelper.bean.news.NewsItem;
@@ -32,6 +33,10 @@ public class NewsPresenter implements NewsContract.Presenter {
                 .newsPresenterModule(new NewsPresenterModule(view))
                 .build()
                 .inject(this);
+        mAdapter.setOnItemClickListener((View v, NewsItem newsItem, int pos) -> {
+            //跳转至新Activity
+            view.startNewsDetailActivity(newsItem);
+        });
         logUtil.d(this, "Presenter创建成功 - " + view.getCurrentTitle());
     }
 
@@ -45,7 +50,7 @@ public class NewsPresenter implements NewsContract.Presenter {
      */
     @Override
     public void getLatestData() {
-        logUtil.d(this, "获取最新数据 - " + view.getCurrentTitle());
+        logUtil.d(this, "开始获取最新数据 - " + view.getCurrentTitle());
 
         final int FIRST_PAGE = 1;
         mNewsRepository.getData(FIRST_PAGE, new Callback<List<NewsItem>>() {
@@ -71,7 +76,7 @@ public class NewsPresenter implements NewsContract.Presenter {
     }
 
     /**
-     * 下滑获取下一页
+     * 获取下一页数据
      */
     @Override
     public void getMoreData() {
@@ -95,6 +100,9 @@ public class NewsPresenter implements NewsContract.Presenter {
         });
     }
 
+    /**
+     * 停止下拉刷新的圈圈旋转
+     */
     private void stopSwipeRefreshing() {
         view.stopSwipeRefreshing();
     }

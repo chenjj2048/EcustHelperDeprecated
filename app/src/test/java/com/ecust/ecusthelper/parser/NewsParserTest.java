@@ -1,6 +1,7 @@
 package com.ecust.ecusthelper.parser;
 
 import com.ecust.ecusthelper.bean.news.NewsPageParseResult;
+import com.ecust.ecusthelper.data.parser.NewsParser;
 import com.ecust.ecusthelper.util.network.HttpUrlConnectionUtil;
 
 import org.junit.Before;
@@ -35,7 +36,7 @@ public class NewsParserTest {
 
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
-        //Todo:这里NewsFragmentTitleConst.getXXX()怎么是空的！！！！！！！！！！！！！！！！！！！！！！！！1
+        //这里NewsFragmentTitleConst.getXXX()怎么是空的！！！！！！！！！！！！！！！！！！！！！！！！1
         List<Object[]> mList = new ArrayList();
 //        for (int i = 0; i < NewsConst.getCatalogCount(); i++) {
 //            String url = NewsConst.getUrl(i);
