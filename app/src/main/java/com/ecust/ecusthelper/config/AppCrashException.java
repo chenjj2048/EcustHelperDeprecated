@@ -1,4 +1,4 @@
-package com.ecust.ecusthelper;
+package com.ecust.ecusthelper.config;
 
 import com.ecust.ecusthelper.util.log.logUtil;
 

@@ -2,6 +2,7 @@ package com.ecust.ecusthelper.bean.news;
 
 import com.annimon.stream.Objects;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -9,16 +10,18 @@ import java.util.List;
  *
  * @author chenjj2048
  */
-public class NewsDetailItem {
-    String catalog = "";            //版块名称
-    String title = "";              //新闻标题
-    String release_time = "";       //发表日期
-    String news_Source = "";        //稿件来源、来稿单位
-    String author = "";             //作者
-    String photo_author = "";       //摄影
-    String editor = "";             //编辑
-    String count_of_visit = "";     //访问量
-    List<ContentLine> mContentLineList;     //每一行内容（文字或图片）
+public class NewsDetailItem implements Serializable {
+    private static final long serialVersionUID = 594209572619375L;
+
+    private String catalog = "";            //版块名称
+    private String title = "";              //新闻标题
+    private String release_time = "";       //发表日期
+    private String news_Source = "";        //稿件来源、来稿单位
+    private String author = "";             //作者
+    private String photo_author = "";       //摄影
+    private String editor = "";             //编辑
+    private String count_of_visit = "";     //访问量
+    private List<ContentLine> mContentLineList;     //每一行内容（文字或图片）
 
     public String getCatalog() {
         return catalog;
@@ -110,7 +113,9 @@ public class NewsDetailItem {
     /**
      * 每一行的解析内容
      */
-    public static class ContentLine {
+    public static class ContentLine implements Serializable {
+        private static final long serialVersionUID = -2149402870754667710L;
+
         final boolean isPicture;
         final String content;
         final String pic_url;

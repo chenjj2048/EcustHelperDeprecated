@@ -23,6 +23,11 @@
         <activity
             android:name=".ui.newsdetail.NewsDetailActivity"
             android:label="@string/news_detail" />
+
+        <!--Glide配置-->
+        <meta-data
+            android:name="com.ecust.ecusthelper.config.GlobalGlideModule"
+            android:value="GlideModule" />
     </application>
 
 </manifest>

@@ -12,6 +12,8 @@ import com.ecust.ecusthelper.adapter.NewsDetailAdapter;
 public interface NewsDetailContract {
     interface IView {
         Context getContext();
+
+        void loadFailueView();
     }
 
     interface Presenter {

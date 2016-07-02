@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.os.StrictMode;
 
+import com.ecust.ecusthelper.config.AppCrashException;
 import com.ecust.ecusthelper.util.log.logUtil;
 import com.squareup.leakcanary.LeakCanary;
 

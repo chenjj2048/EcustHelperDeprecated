@@ -3,6 +3,7 @@ package com.ecust.ecusthelper.adapter;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +12,11 @@ import android.widget.TextView;
 
 import com.annimon.stream.Objects;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.ecust.ecusthelper.R;
 import com.ecust.ecusthelper.bean.news.NewsDetailItem;
 
+import java.util.Locale;
 import java.util.NoSuchElementException;
 
 import butterknife.Bind;
@@ -25,15 +28,8 @@ import butterknife.ButterKnife;
  * @author chenjj2048
  */
 public class NewsDetailAdapter extends RecyclerView.Adapter {
-    private static final int VIEW_TYPE_HEADER = 0;
-    private static final int VIEW_TYPE_PLAIN_TEXT = 1;
-    private static final int VIEW_TYPE_PICTURE = 2;
-    private final Context context;
+    private static final int HEAD_COUNT = 1;
     private NewsDetailItem mNewsDetailItem;
-
-    public NewsDetailAdapter(Context context) {
-        this.context = context;
-    }
 
     public void setNewsDetailItem(NewsDetailItem newsDetailItem) {
         Objects.requireNonNull(newsDetailItem);
@@ -42,28 +38,22 @@ public class NewsDetailAdapter extends RecyclerView.Adapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         RecyclerView.ViewHolder holder;
-        View view;
         switch (viewType) {
-            case VIEW_TYPE_HEADER:
-                view = inflater.inflate(R.layout.item_news_detail_header, parent, false);
-                holder = new HeaderHolder(view);
+            case VIEW_TYPE.HEADER:
+                holder = HeaderHolder.newInstance(parent);
                 break;
-            case VIEW_TYPE_PLAIN_TEXT:
-                view = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
-                holder = new TextHolder(view);
+            case VIEW_TYPE.FOOTER:
+                holder = FooterHolder.newInstantce(parent);
                 break;
-            case VIEW_TYPE_PICTURE:
-                view = new ImageView(context);
-                view.setLayoutParams(new ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.WRAP_CONTENT));
-                view = inflater.inflate(R.layout.item_imageview, parent, false);
-                holder = new ImageHolder(view);
+            case VIEW_TYPE.PLAIN_TEXT:
+                holder = TextHolder.newInstance(parent);
+                break;
+            case VIEW_TYPE.IMAGE:
+                holder = ImageHolder.newInstance(parent);
                 break;
             default:
-                throw new NoSuchElementException();
+                throw new NoSuchElementException("没有对应的ViewHolder");
         }
         return holder;
     }
@@ -76,26 +66,37 @@ public class NewsDetailAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemViewType(int position) {
         if (position == 0) {
-            return VIEW_TYPE_HEADER;
+            return VIEW_TYPE.HEADER;
+        } else if (position == getItemCount() - 1) {
+            return VIEW_TYPE.FOOTER;
         } else {
             NewsDetailItem.ContentLine item = mNewsDetailItem.getContentLineList().get(position - 1);
             if (item.isPicture()) {
-                return VIEW_TYPE_PICTURE;
+                return VIEW_TYPE.IMAGE;
             } else {
-                return VIEW_TYPE_PLAIN_TEXT;
+                return VIEW_TYPE.PLAIN_TEXT;
             }
         }
     }
 
     @Override
     public int getItemCount() {
-        if (mNewsDetailItem == null) return 0;
+        if (mNewsDetailItem == null)
+            return 0;
+        else {
+            int FOOTER_COUNT = 1;
+            return HEAD_COUNT + mNewsDetailItem.getContentLineList().size() + FOOTER_COUNT;
+        }
+    }
 
-        /**
-         * 计算Item数量
-         * 头部1个+文字+图片
-         */
-        return 1 + mNewsDetailItem.getContentLineList().size();
+    /**
+     * View类型
+     */
+    static final class VIEW_TYPE {
+        public static final int HEADER = 0;
+        public static final int PLAIN_TEXT = 1;
+        public static final int IMAGE = 2;
+        public static final int FOOTER = 3;
     }
 
     static abstract class AbstarctViewHolder extends RecyclerView.ViewHolder {
@@ -115,11 +116,24 @@ public class NewsDetailAdapter extends RecyclerView.Adapter {
         public TextHolder(View itemView) {
             super(itemView);
             textView = (TextView) itemView.findViewById(android.R.id.text1);
+            textView.setLineSpacing(0, 1.25f);
+        }
+
+        public static RecyclerView.ViewHolder newInstance(ViewGroup parent) {
+            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+            View view = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
+            return new TextHolder(view);
+        }
+
+        private String getItemText(NewsDetailItem data, int pos) {
+            NewsDetailItem.ContentLine contentLine = data.getContentLineList().get(pos - HEAD_COUNT);
+            return contentLine.getText();
         }
 
         @Override
         protected void updateUI(NewsDetailItem data, int pos) {
-            String text = data.getContentLineList().get(pos - 1).getText();
+            String text = getItemText(data, pos);
+            text = text.replace("\r\n\r\n", "\r\n").replace("\r\r", "\r").replace("\n\n", "\n");
             this.textView.setText(text);
         }
     }
@@ -135,15 +149,71 @@ public class NewsDetailAdapter extends RecyclerView.Adapter {
             imageView = (ImageView) itemView.findViewById(R.id.imageView);
         }
 
+        public static RecyclerView.ViewHolder newInstance(ViewGroup parent) {
+            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+            View view = inflater.inflate(R.layout.item_imageview, parent, false);
+            return new ImageHolder(view);
+        }
+
+        private String getItemImageUrl(NewsDetailItem data, int pos) {
+            NewsDetailItem.ContentLine contentLine = data.getContentLineList().get(pos - HEAD_COUNT);
+            return contentLine.getPictureUrl();
+        }
+
         @Override
         protected void updateUI(NewsDetailItem data, int pos) {
-            String imageUrl = data.getContentLineList().get(pos - 1).getPictureUrl();
-            //Todo:解决View复用问题
-            Glide.with(imageView.getContext())
+            final String imageUrl = getItemImageUrl(data, pos);
+            final Context context = imageView.getContext();
+
+            Glide.with(context)
                     .load(imageUrl)
-                    .placeholder(R.drawable.default_loading_background)
                     .crossFade()
+                    .placeholder(R.drawable.ic_picture_loading)
+                    .error(R.drawable.ic_picture_loading_error)
+                    .fitCenter()
+//                    .bitmapTransform(new BlurTransformation(context, 50))
+                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
                     .into(imageView);
+        }
+    }
+
+    /**
+     * 底部信息（作者、摄影、编辑）
+     */
+    static class FooterHolder extends AbstarctViewHolder {
+        TextView textView;
+
+        public FooterHolder(View itemView) {
+            super(itemView);
+            textView = (TextView) itemView;
+            textView.setGravity(Gravity.END);
+        }
+
+        public static RecyclerView.ViewHolder newInstantce(ViewGroup parent) {
+            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+            View view = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
+            return new FooterHolder(view);
+        }
+
+        @Override
+        protected void updateUI(NewsDetailItem data, int pos) {
+            String text = getItemText(data);
+            textView.setText(text);
+        }
+
+        private String getItemText(NewsDetailItem data) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("(");
+            if (!TextUtils.isEmpty(data.getAuthor()))
+                sb.append("作者:").append(data.getAuthor()).append(" ");
+            if (!TextUtils.isEmpty(data.getPhotoAuthor()))
+                sb.append("摄影:").append(data.getPhotoAuthor()).append(" ");
+            if (!TextUtils.isEmpty(data.getEditor()))
+                sb.append("编辑:").append(data.getEditor()).append(" ");
+            sb.deleteCharAt(sb.length() - 1);
+            sb.append(")");
+
+            return sb.toString();
         }
     }
 
@@ -180,31 +250,21 @@ public class NewsDetailAdapter extends RecyclerView.Adapter {
             ButterKnife.bind(this, itemView);
         }
 
+        public static RecyclerView.ViewHolder newInstance(ViewGroup parent) {
+            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+            View view = inflater.inflate(R.layout.item_news_detail_header, parent, false);
+            return new HeaderHolder(view);
+        }
+
         @Override
         protected void updateUI(NewsDetailItem mData, int pos) {
-            String text = makeInfo(mData);
+            String text = String.format(
+                    Locale.CHINA,
+                    "稿件来源：%s  访问量：%s", mData.getNewsSource(), mData.getCountOfVisits());
             this.mMoreInfo.setText(text);
             this.mTitle.setText(mData.getTitle());
             this.mSection.setText(mData.getCatalog());
             this.mTime.setText(mData.getReleaseTime());
-        }
-
-        /**
-         * 产生详细的作者、来源、编辑等等信息
-         */
-        private String makeInfo(NewsDetailItem mData) {
-            StringBuilder sb = new StringBuilder();
-            if (!TextUtils.isEmpty(mData.getNewsSource()))
-                sb.append("稿件来源：").append(mData.getNewsSource()).append("  ");
-            if (!TextUtils.isEmpty(mData.getAuthor()))
-                sb.append("作者：").append(mData.getAuthor()).append("  ");
-            if (!TextUtils.isEmpty(mData.getPhotoAuthor()))
-                sb.append("摄影：").append(mData.getPhotoAuthor()).append("  ");
-            if (!TextUtils.isEmpty(mData.getEditor()))
-                sb.append("编辑：").append(mData.getEditor()).append("  ");
-            if (!TextUtils.isEmpty(mData.getCountOfVisits()))
-                sb.append("访问量：").append(mData.getCountOfVisits()).append("  ");
-            return sb.toString();
         }
     }
 }

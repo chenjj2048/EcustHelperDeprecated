@@ -3,7 +3,6 @@ package com.ecust.ecusthelper.ui.newsdetail;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -11,7 +10,6 @@ import android.support.v7.widget.Toolbar;
 import com.ecust.ecusthelper.R;
 import com.ecust.ecusthelper.baseAndCommon.BaseMvpActivity;
 import com.ecust.ecusthelper.bean.news.NewsItem;
-import com.ecust.ecusthelper.customview.DividerItemDecoration;
 import com.ecust.ecusthelper.util.log.logUtil;
 
 import butterknife.Bind;
@@ -53,6 +51,11 @@ public class NewsDetailActivity extends BaseMvpActivity<NewsDetailContract.Prese
         return this;
     }
 
+    @Override
+    public void loadFailueView() {
+
+    }
+
     private void initIntentData() {
         mNewsItem = (NewsItem) getIntent().getSerializableExtra(INTENT_KEY_DATA);
         mCatalogName = getIntent().getStringExtra(INTENT_KEY_CATALOG);
@@ -70,8 +73,6 @@ public class NewsDetailActivity extends BaseMvpActivity<NewsDetailContract.Prese
 
         view.setLayoutManager(mLayoutManager);
         view.setAdapter(mAdapter);
-        view.setItemAnimator(new DefaultItemAnimator());
-        view.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL_LIST));
     }
 
 
