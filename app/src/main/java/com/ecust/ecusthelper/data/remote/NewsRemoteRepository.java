@@ -5,7 +5,7 @@ import android.text.TextUtils;
 
 import com.annimon.stream.Objects;
 import com.ecust.ecusthelper.bean.news.NewsPageParseResult;
-import com.ecust.ecusthelper.consts.NewsConst;
+import com.ecust.ecusthelper.consts.NewsTitleAndUrlConst;
 import com.ecust.ecusthelper.data.base.Callback;
 import com.ecust.ecusthelper.data.base.IRepository;
 import com.ecust.ecusthelper.data.parser.NewsParser;
@@ -32,17 +32,17 @@ public class NewsRemoteRepository implements IRepository<Integer, NewsPageParseR
 
     /**
      * @param fragmentIndex 对应新闻版块的下标
-     * @see NewsConst
+     * @see NewsTitleAndUrlConst
      */
     public NewsRemoteRepository(int fragmentIndex) {
         this.mFragmentIndex = fragmentIndex;
-        this.mUrlPrefix = NewsConst.getUrl(fragmentIndex) + "&page=";
+        this.mUrlPrefix = NewsTitleAndUrlConst.getUrl(fragmentIndex) + "&page=";
     }
 
     @NonNull
     @Override
     public String getRepositoryName() {
-        return "远程-新闻仓库-" + NewsConst.getTitle(mFragmentIndex);
+        return "远程-新闻仓库-" + NewsTitleAndUrlConst.getTitle(mFragmentIndex);
     }
 
     @Override

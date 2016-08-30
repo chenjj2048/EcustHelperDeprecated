@@ -6,7 +6,7 @@ import android.text.TextUtils;
 import com.ecust.ecusthelper.adapter.NewsDetailAdapter;
 import com.ecust.ecusthelper.bean.news.NewsDetailItem;
 import com.ecust.ecusthelper.data.parser.NewsDetailParser;
-import com.ecust.ecusthelper.util.ACache;
+import com.ecust.ecusthelper.util.gitrepository.ACache;
 import com.ecust.ecusthelper.util.network.HttpUrlConnectionUtil;
 
 import java.util.concurrent.TimeUnit;

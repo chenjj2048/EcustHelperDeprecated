@@ -9,7 +9,7 @@ import android.support.v7.widget.Toolbar;
 
 import com.annimon.stream.Objects;
 import com.ecust.ecusthelper.R;
-import com.ecust.ecusthelper.baseAndCommon.BaseMvpActivity;
+import com.ecust.ecusthelper.base.BaseMvpActivity;
 import com.ecust.ecusthelper.ui.news.NewsActivity;
 import com.ecust.ecusthelper.util.ui.DrawerUtil;
 import com.jaeger.library.StatusBarUtil;

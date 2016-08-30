@@ -14,9 +14,9 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.ecust.ecusthelper.R;
-import com.ecust.ecusthelper.baseAndCommon.BaseMvpFragment;
+import com.ecust.ecusthelper.base.BaseMvpFragment;
 import com.ecust.ecusthelper.bean.news.NewsItem;
-import com.ecust.ecusthelper.consts.NewsConst;
+import com.ecust.ecusthelper.consts.NewsTitleAndUrlConst;
 import com.ecust.ecusthelper.customview.DividerItemDecoration;
 import com.ecust.ecusthelper.data.base.Callback;
 import com.ecust.ecusthelper.ui.newsdetail.NewsDetailActivity;
@@ -47,6 +47,12 @@ public class NewsFragment extends BaseMvpFragment<NewsContract.Presenter> implem
         return mFragment;
     }
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        if (!getUserVisibleHint()) return;
+        super.executeUntilFragmentAttached(() -> getPresenter().onFragmentVisible());
+    }
+
     @NonNull
     @Override
     protected NewsContract.Presenter createPresenter() {
@@ -64,20 +70,8 @@ public class NewsFragment extends BaseMvpFragment<NewsContract.Presenter> implem
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        logUtil.v(this, getCurrentTitle() + " - onViewCreated");
-
         setupRecyclerView();
         setupSwipeRefreshLayout();
-    }
-
-    private void setupSwipeRefreshLayout() {
-        final SwipeRefreshLayout view = mSwipeRefreshLayout;
-        view.setColorSchemeResources(android.R.color.holo_red_light,
-                android.R.color.holo_blue_light,
-                android.R.color.holo_orange_light);
-        view.setProgressViewOffset(false, 0, SizeUtil.dp2px(getContext(), 24));
-        //下拉刷新
-        view.setOnRefreshListener(() -> getPresenter().getLatestData());
     }
 
     private void setupRecyclerView() {
@@ -106,10 +100,15 @@ public class NewsFragment extends BaseMvpFragment<NewsContract.Presenter> implem
         });
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        logUtil.v(this, getCurrentTitle() + " - onDetach");
+    private void setupSwipeRefreshLayout() {
+        final SwipeRefreshLayout view = mSwipeRefreshLayout;
+        view.setColorSchemeResources(android.R.color.holo_red_light,
+                android.R.color.holo_blue_light,
+                android.R.color.holo_orange_light);
+        view.setProgressViewOffset(false, 0, SizeUtil.dp2px(getContext(), 24));
+        //下拉刷新
+        view.setOnRefreshListener(() ->
+                getPresenter().pullToRefresh());
     }
 
     @Override
@@ -117,15 +116,8 @@ public class NewsFragment extends BaseMvpFragment<NewsContract.Presenter> implem
         Intent intent = new Intent();
         intent.setClass(getActivity(), NewsDetailActivity.class);
         intent.putExtra(NewsDetailActivity.INTENT_KEY_DATA, newsItem);
-        intent.putExtra(NewsDetailActivity.INTENT_KEY_CATALOG,getCurrentTitle());
+        intent.putExtra(NewsDetailActivity.INTENT_KEY_CATALOG, getCurrentTitle());
         startActivity(intent);
-    }
-
-    /**
-     * 由ViewPager初始化结束或滑动引起
-     */
-    public void onCurrentFragmentSelected() {
-        getPresenter().getLatestData();
     }
 
     @Override
@@ -140,7 +132,7 @@ public class NewsFragment extends BaseMvpFragment<NewsContract.Presenter> implem
 
     @Override
     public String getCurrentTitle() {
-        return NewsConst.getTitle(mFragmentIndex);
+        return NewsTitleAndUrlConst.getTitle(mFragmentIndex);
     }
 
     @Override
@@ -153,6 +145,7 @@ public class NewsFragment extends BaseMvpFragment<NewsContract.Presenter> implem
             case Callback.REASON_NO_MORE_DATA:
                 msg += "已无更多数据";
                 Toast.makeText(getContext(), "已无更多数据", Toast.LENGTH_SHORT).show();
+                getPresenter().hideFooterLoadingView();
                 break;
             case Callback.REASON_OTHERS:
                 msg += "数据获取失败";
@@ -176,6 +169,6 @@ public class NewsFragment extends BaseMvpFragment<NewsContract.Presenter> implem
 
     @Override
     public String toString() {
-        return super.toString() + " " + NewsConst.getTitle(mFragmentIndex);
+        return super.toString() + " " + NewsTitleAndUrlConst.getTitle(mFragmentIndex);
     }
 }

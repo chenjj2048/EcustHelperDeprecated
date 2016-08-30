@@ -8,7 +8,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.ecust.ecusthelper.BuildConfig;
-import com.ecust.ecusthelper.baseAndCommon.BaseAppCompatActivity;
+import com.ecust.ecusthelper.base.BaseAppCompatActivity;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;

@@ -10,7 +10,11 @@ import java.util.List;
  *
  * @author chenjj2048
  */
-public class NewsConst {
+
+/**
+ * 七个版块对应的标题及地址
+ */
+public class NewsTitleAndUrlConst {
     public static final String NEWS_HOME_URL = "http://news.ecust.edu.cn";
     private static final List<Pair<String, String>> mPages;
 
@@ -39,7 +43,7 @@ public class NewsConst {
         return mPages.get(position).second;
     }
 
-    public static void checkRange(int position) {
+    private static void checkRange(int position) {
         if (position < 0 || position >= mPages.size())
             throw new IllegalArgumentException("版块下标不正确，数组越界");
     }

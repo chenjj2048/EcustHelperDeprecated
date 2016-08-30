@@ -28,7 +28,6 @@ import butterknife.ButterKnife;
  * @author chenjj2048
  */
 public class NewsDetailAdapter extends RecyclerView.Adapter {
-    private static final int HEAD_COUNT = 1;
     private NewsDetailItem mNewsDetailItem;
 
     public void setNewsDetailItem(NewsDetailItem newsDetailItem) {
@@ -58,9 +57,11 @@ public class NewsDetailAdapter extends RecyclerView.Adapter {
         return holder;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-        ((AbstarctViewHolder) viewHolder).updateUI(mNewsDetailItem, position);
+        if (viewHolder instanceof OnUIupdateListener)
+            ((OnUIupdateListener) viewHolder).onUpdateUI(mNewsDetailItem, position);
     }
 
     @Override
@@ -84,33 +85,39 @@ public class NewsDetailAdapter extends RecyclerView.Adapter {
         if (mNewsDetailItem == null)
             return 0;
         else {
-            int FOOTER_COUNT = 1;
-            return HEAD_COUNT + mNewsDetailItem.getContentLineList().size() + FOOTER_COUNT;
+            return VIEW_TYPE.HEADER_COUNT + mNewsDetailItem.getContentLineList().size() + VIEW_TYPE.FOOTER_COUNT;
         }
+    }
+
+    @SuppressWarnings("unused")
+    interface OnUIupdateListener<T, R> {
+        void onUpdateUI(T data, int pos);
+
+        R getItem(T data, int pos);
     }
 
     /**
      * View类型
      */
     static final class VIEW_TYPE {
+        /**
+         * View类型
+         */
         public static final int HEADER = 0;
         public static final int PLAIN_TEXT = 1;
         public static final int IMAGE = 2;
         public static final int FOOTER = 3;
-    }
-
-    static abstract class AbstarctViewHolder extends RecyclerView.ViewHolder {
-        public AbstarctViewHolder(View itemView) {
-            super(itemView);
-        }
-
-        protected abstract void updateUI(NewsDetailItem data, int pos);
+        /**
+         * 数量
+         */
+        public static final int HEADER_COUNT = 1;
+        public static final int FOOTER_COUNT = 1;
     }
 
     /**
      * 文字内容
      */
-    static class TextHolder extends AbstarctViewHolder {
+    static class TextHolder extends RecyclerView.ViewHolder implements OnUIupdateListener<NewsDetailItem, String> {
         TextView textView;
 
         public TextHolder(View itemView) {
@@ -125,15 +132,25 @@ public class NewsDetailAdapter extends RecyclerView.Adapter {
             return new TextHolder(view);
         }
 
-        private String getItemText(NewsDetailItem data, int pos) {
-            NewsDetailItem.ContentLine contentLine = data.getContentLineList().get(pos - HEAD_COUNT);
-            return contentLine.getText();
+        /**
+         * 获取文本内容
+         *
+         * @param data data
+         * @param pos  pos
+         * @return 文字内容
+         */
+        @Override
+        public String getItem(NewsDetailItem data, int pos) {
+            pos -= VIEW_TYPE.HEADER_COUNT;
+            NewsDetailItem.ContentLine contentLine = data.getContentLineList().get(pos);
+            String text = contentLine.getText();
+            text = text.replace("\r\n\r\n", "\r\n").replace("\r\r", "\r").replace("\n\n", "\n");
+            return text;
         }
 
         @Override
-        protected void updateUI(NewsDetailItem data, int pos) {
-            String text = getItemText(data, pos);
-            text = text.replace("\r\n\r\n", "\r\n").replace("\r\r", "\r").replace("\n\n", "\n");
+        public void onUpdateUI(NewsDetailItem data, int pos) {
+            String text = getItem(data, pos);
             this.textView.setText(text);
         }
     }
@@ -141,7 +158,7 @@ public class NewsDetailAdapter extends RecyclerView.Adapter {
     /**
      * 图片内容
      */
-    static class ImageHolder extends AbstarctViewHolder {
+    static class ImageHolder extends RecyclerView.ViewHolder implements OnUIupdateListener<NewsDetailItem, String> {
         ImageView imageView;
 
         public ImageHolder(View itemView) {
@@ -155,14 +172,23 @@ public class NewsDetailAdapter extends RecyclerView.Adapter {
             return new ImageHolder(view);
         }
 
-        private String getItemImageUrl(NewsDetailItem data, int pos) {
-            NewsDetailItem.ContentLine contentLine = data.getContentLineList().get(pos - HEAD_COUNT);
+        /**
+         * 获取图片URL地址
+         *
+         * @param data data
+         * @param pos  pos
+         * @return 图片URL地址
+         */
+        @Override
+        public String getItem(NewsDetailItem data, int pos) {
+            pos -= VIEW_TYPE.HEADER_COUNT;
+            NewsDetailItem.ContentLine contentLine = data.getContentLineList().get(pos);
             return contentLine.getPictureUrl();
         }
 
         @Override
-        protected void updateUI(NewsDetailItem data, int pos) {
-            final String imageUrl = getItemImageUrl(data, pos);
+        public void onUpdateUI(NewsDetailItem data, int pos) {
+            final String imageUrl = getItem(data, pos);
             final Context context = imageView.getContext();
 
             Glide.with(context)
@@ -180,7 +206,7 @@ public class NewsDetailAdapter extends RecyclerView.Adapter {
     /**
      * 底部信息（作者、摄影、编辑）
      */
-    static class FooterHolder extends AbstarctViewHolder {
+    static class FooterHolder extends RecyclerView.ViewHolder implements OnUIupdateListener<NewsDetailItem, String> {
         TextView textView;
 
         public FooterHolder(View itemView) {
@@ -196,12 +222,13 @@ public class NewsDetailAdapter extends RecyclerView.Adapter {
         }
 
         @Override
-        protected void updateUI(NewsDetailItem data, int pos) {
-            String text = getItemText(data);
+        public void onUpdateUI(NewsDetailItem data, int pos) {
+            String text = getItem(data, pos);
             textView.setText(text);
         }
 
-        private String getItemText(NewsDetailItem data) {
+        @Override
+        public String getItem(NewsDetailItem data, int pos) {
             StringBuilder sb = new StringBuilder();
             sb.append("(");
             if (!TextUtils.isEmpty(data.getAuthor()))
@@ -220,7 +247,7 @@ public class NewsDetailAdapter extends RecyclerView.Adapter {
     /**
      * 顶部信息
      */
-    static class HeaderHolder extends AbstarctViewHolder {
+    static class HeaderHolder extends RecyclerView.ViewHolder implements OnUIupdateListener<NewsDetailItem, String> {
         /**
          * 版块名称
          */
@@ -257,14 +284,18 @@ public class NewsDetailAdapter extends RecyclerView.Adapter {
         }
 
         @Override
-        protected void updateUI(NewsDetailItem mData, int pos) {
-            String text = String.format(
-                    Locale.CHINA,
-                    "稿件来源：%s  访问量：%s", mData.getNewsSource(), mData.getCountOfVisits());
+        public void onUpdateUI(NewsDetailItem data, int pos) {
+            String text = getItem(data, pos);
             this.mMoreInfo.setText(text);
-            this.mTitle.setText(mData.getTitle());
-            this.mSection.setText(mData.getCatalog());
-            this.mTime.setText(mData.getReleaseTime());
+            this.mTitle.setText(data.getTitle());
+            this.mSection.setText(data.getCatalog());
+            this.mTime.setText(data.getReleaseTime());
+        }
+
+        @Override
+        public String getItem(NewsDetailItem data, int pos) {
+            return String.format(Locale.CHINA,
+                    "稿件来源：%s  访问量：%s", data.getNewsSource(), data.getCountOfVisits());
         }
     }
 }

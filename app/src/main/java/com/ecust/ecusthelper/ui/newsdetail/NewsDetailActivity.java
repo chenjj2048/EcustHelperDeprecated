@@ -8,7 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 
 import com.ecust.ecusthelper.R;
-import com.ecust.ecusthelper.baseAndCommon.BaseMvpActivity;
+import com.ecust.ecusthelper.base.BaseMvpActivity;
 import com.ecust.ecusthelper.bean.news.NewsItem;
 import com.ecust.ecusthelper.util.log.logUtil;
 

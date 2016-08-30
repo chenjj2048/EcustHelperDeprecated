@@ -13,6 +13,7 @@ import com.squareup.leakcanary.LeakCanary;
  *
  * @author chenjj2048
  */
+//Todo:以后自己造个长阴影的轮子
 public class EcustApplication extends Application {
     private static Context context;
 

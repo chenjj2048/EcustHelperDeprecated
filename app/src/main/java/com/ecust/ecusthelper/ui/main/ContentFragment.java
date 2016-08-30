@@ -8,8 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.ecust.ecusthelper.R;
-import com.ecust.ecusthelper.baseAndCommon.BaseAppCompatActivity;
-import com.ecust.ecusthelper.baseAndCommon.BaseFragment;
+import com.ecust.ecusthelper.base.BaseFragment;
+import com.ecust.ecusthelper.util.ToolbarUtil;
 
 import butterknife.Bind;
 
@@ -29,7 +29,7 @@ public class ContentFragment extends BaseFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        BaseAppCompatActivity.setupToolbar(getActivity(), mToolbar);
+        ToolbarUtil.setupToolbar(getActivity(), mToolbar);
     }
 
     @Override

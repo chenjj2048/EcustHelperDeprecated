@@ -38,9 +38,9 @@ public class NewsParserTest {
     public static Collection<Object[]> data() {
         //这里NewsFragmentTitleConst.getXXX()怎么是空的！！！！！！！！！！！！！！！！！！！！！！！！1
         List<Object[]> mList = new ArrayList();
-//        for (int i = 0; i < NewsConst.getCatalogCount(); i++) {
-//            String url = NewsConst.getUrl(i);
-//            String title = NewsConst.getTitle(i);
+//        for (int i = 0; i < NewsTitleAndUrlConst.getCatalogCount(); i++) {
+//            String url = NewsTitleAndUrlConst.getUrl(i);
+//            String title = NewsTitleAndUrlConst.getTitle(i);
 //            Object[] item = new Object[]{url, title};
 //            mList.add(item);
 //        }

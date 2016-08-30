@@ -6,7 +6,7 @@ import com.annimon.stream.Objects;
 import com.annimon.stream.function.Function;
 import com.ecust.ecusthelper.bean.news.NewsItem;
 import com.ecust.ecusthelper.bean.news.NewsPageParseResult;
-import com.ecust.ecusthelper.consts.NewsConst;
+import com.ecust.ecusthelper.consts.NewsTitleAndUrlConst;
 import com.ecust.ecusthelper.util.log.logUtil;
 
 import org.jsoup.Jsoup;
@@ -69,7 +69,7 @@ public class NewsParser implements Function<String, NewsPageParseResult> {
         for (Element li : collection_li) {
             final String title = li.select("span").last().text();
             final String time = li.getElementsByClass("time").first().text();
-            final String url = uniformUrl(NewsConst.NEWS_HOME_URL + li.select("a").attr("href"));
+            final String url = uniformUrl(NewsTitleAndUrlConst.NEWS_HOME_URL + li.select("a").attr("href"));
 
             final NewsItem item = new NewsItem(title, time, url);
             mList.add(item);

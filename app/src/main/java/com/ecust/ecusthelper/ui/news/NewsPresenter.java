@@ -101,9 +101,30 @@ public class NewsPresenter implements NewsContract.Presenter {
     }
 
     /**
+     * 隐藏底部正在加载
+     */
+    @Override
+    public void hideFooterLoadingView() {
+        mAdapter.hideFooterLoaing();
+    }
+
+    /**
      * 停止下拉刷新的圈圈旋转
      */
     private void stopSwipeRefreshing() {
         view.stopSwipeRefreshing();
+    }
+
+    @Override
+    public void pullToRefresh() {
+        getLatestData();
+        if (mAdapter.getItemCount() <= NewsItemAdapter.COUNT_OF_FOOTER) {
+            view.stopSwipeRefreshing();
+        }
+    }
+
+    @Override
+    public void onFragmentVisible() {
+        getLatestData();
     }
 }

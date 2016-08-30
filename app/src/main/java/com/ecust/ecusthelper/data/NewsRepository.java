@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import com.annimon.stream.Objects;
 import com.ecust.ecusthelper.bean.news.NewsItem;
 import com.ecust.ecusthelper.bean.news.NewsPageParseResult;
-import com.ecust.ecusthelper.consts.NewsConst;
+import com.ecust.ecusthelper.consts.NewsTitleAndUrlConst;
 import com.ecust.ecusthelper.data.base.Callback;
 import com.ecust.ecusthelper.data.base.IRepository;
 import com.ecust.ecusthelper.data.local.NewsLocalRepository;
@@ -45,7 +45,7 @@ public final class NewsRepository implements IRepository<Integer, List<NewsItem>
 
     /**
      * @param fragmentIndex 对应新闻版块的下标
-     * @see NewsConst
+     * @see NewsTitleAndUrlConst
      */
     public NewsRepository(int fragmentIndex) {
         DaggerNewsRepositoryCompent.builder()
@@ -59,7 +59,7 @@ public final class NewsRepository implements IRepository<Integer, List<NewsItem>
     @NonNull
     @Override
     public String getRepositoryName() {
-        return "新闻仓库 - " + NewsConst.getTitle(mFragmentIndex);
+        return "新闻仓库 - " + NewsTitleAndUrlConst.getTitle(mFragmentIndex);
     }
 
     @Override

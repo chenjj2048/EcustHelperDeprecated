@@ -1,8 +1,9 @@
-package com.ecust.ecusthelper.baseAndCommon;
+package com.ecust.ecusthelper.base;
 
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.CallSuper;
 import android.support.v4.app.Fragment;
 import android.view.View;
@@ -17,6 +18,7 @@ import butterknife.ButterKnife;
  * @author chenjj2048
  */
 public abstract class BaseFragment extends Fragment {
+    private final Handler handler = new Handler();
     private Context context;
 
     @Override
@@ -53,5 +55,16 @@ public abstract class BaseFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
+        handler.removeMessages(0);
+    }
+
+    protected void executeUntilFragmentAttached(Runnable runnable) {
+        handler.postDelayed(() -> {
+            if (context != null) {
+                runnable.run();
+            } else {
+                executeUntilFragmentAttached(runnable);
+            }
+        }, 50);
     }
 }

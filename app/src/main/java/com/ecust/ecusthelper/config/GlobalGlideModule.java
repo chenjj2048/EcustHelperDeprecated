@@ -24,13 +24,8 @@ public class GlobalGlideModule implements GlideModule {
         setDiskCache(context, builder);
     }
 
-
-    private void setDiskCache(Context context, GlideBuilder builder) {
-        final int MB = 1024 * 1024;
-        /**
-         * Todo:先要做判断是否有外部缓存
-         */
-        builder.setDiskCache(new ExternalCacheDiskCacheFactory(context, "glide", 100 * MB));
+    private void setDecodeFormat(GlideBuilder builder) {
+        builder.setDecodeFormat(DecodeFormat.PREFER_RGB_565);
     }
 
     private void setMemoryCache(Context context, GlideBuilder builder) {
@@ -45,8 +40,12 @@ public class GlobalGlideModule implements GlideModule {
         builder.setBitmapPool(new LruBitmapPool(customBitmapPoolSize));
     }
 
-    private void setDecodeFormat(GlideBuilder builder) {
-        builder.setDecodeFormat(DecodeFormat.PREFER_RGB_565);
+    private void setDiskCache(Context context, GlideBuilder builder) {
+        final int MB = 1024 * 1024;
+        /**
+         * Todo:先要做判断是否有外部缓存
+         */
+        builder.setDiskCache(new ExternalCacheDiskCacheFactory(context, "glide", 100 * MB));
     }
 
     @Override

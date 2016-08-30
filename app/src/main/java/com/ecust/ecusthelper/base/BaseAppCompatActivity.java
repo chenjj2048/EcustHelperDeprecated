@@ -1,18 +1,17 @@
-package com.ecust.ecusthelper.baseAndCommon;
+package com.ecust.ecusthelper.base;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.ecust.ecusthelper.R;
+import com.ecust.ecusthelper.util.ToolbarUtil;
 import com.ecust.ecusthelper.util.log.logUtil;
 import com.jaeger.library.StatusBarUtil;
 
@@ -27,22 +26,7 @@ import butterknife.ButterKnife;
  */
 public abstract class BaseAppCompatActivity extends AppCompatActivity {
     private static WeakReference<AppCompatActivity> weakReference = new WeakReference<>(null);
-    private boolean firstRun = true;
-
-    public static void setupToolbar(Activity target, Toolbar toolbar) {
-        AppCompatActivity activity;
-        if (target instanceof AppCompatActivity)
-            activity = (AppCompatActivity) target;
-        else
-            throw new IllegalArgumentException("请传个AppCompatActivity进来");
-
-        activity.setSupportActionBar(toolbar);
-        final ActionBar actionBar = activity.getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeButtonEnabled(true);
-        }
-    }
+    private boolean updateStatusbarNextTime = true;
 
     @Nullable
     public static AppCompatActivity getCurrentActivity() {
@@ -57,7 +41,7 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
     }
 
     public void setupToolbar(Toolbar toolbar) {
-        setupToolbar(this, toolbar);
+        ToolbarUtil.setupToolbar(this, toolbar);
     }
 
     @Override
@@ -77,17 +61,10 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (firstRun) {
-            firstRun = false;
-            this.setStatusBar();
+        if (updateStatusbarNextTime) {
+            updateStatusbarNextTime = false;
+            setStatusBar();
         }
-        logUtil.d(this, "onStart成功");
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        logUtil.d(this, "onPause成功");
     }
 
     @Override
@@ -121,7 +98,6 @@ public abstract class BaseAppCompatActivity extends AppCompatActivity {
             this.onBackPressed();
             return true;
         }
-        super.onOptionsItemSelected(item);
-        return false;
+        return super.onOptionsItemSelected(item);
     }
 }

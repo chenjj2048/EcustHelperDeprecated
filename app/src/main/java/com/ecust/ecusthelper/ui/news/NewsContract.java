@@ -38,5 +38,11 @@ public interface NewsContract {
         void getLatestData();
 
         void getMoreData();
+
+        void hideFooterLoadingView();
+
+        void pullToRefresh();
+
+        void onFragmentVisible();
     }
 }

@@ -1,28 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="标题"
-        android:textSize="16dp" />
+        android:orientation="vertical"
+        android:padding="10dp">
 
-    <TextView
-        android:id="@+id/time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/title"
-        android:text="2016-05-01"
-        android:textSize="16dp" />
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lineSpacingMultiplier="1.25"
+            android:paddingRight="30dp"
+            android:text="标题"
+            android:textColor="@color/colorBlackGray"
+            android:textSize="16dp" />
 
-    <TextView
-        android:id="@+id/relativeTime"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <!--时间-->
+            <TextView
+                android:id="@+id/time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2016-05-01"
+                android:textSize="16dp" />
+
+            <!--有图-->
+            <ImageView
+                android:id="@+id/pictureTextDrawable"
+                android:layout_width="22dp"
+                android:layout_height="16dp"
+                android:layout_marginLeft="6dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <com.ecust.ecusthelper.util.gitrepository.LabelView
+        android:id="@+id/labelView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/time"
-        android:text="几天前"
-        android:textSize="16dp" />
-</RelativeLayout>
+        android:layout_gravity="right"
+        app:lv_gravity="TOP_RIGHT"
+        app:lv_min_size="40dp"
+        app:lv_text="NEW"
+        app:lv_text_size="10dp" />
+</FrameLayout>

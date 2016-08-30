@@ -1,4 +1,4 @@
-package com.ecust.ecusthelper.baseAndCommon;
+package com.ecust.ecusthelper.base;
 
 import android.app.Activity;
 import android.content.Context;

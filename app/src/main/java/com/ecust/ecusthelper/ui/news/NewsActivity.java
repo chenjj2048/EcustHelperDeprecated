@@ -1,14 +1,13 @@
 package com.ecust.ecusthelper.ui.news;
 
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 
 import com.ecust.ecusthelper.R;
 import com.ecust.ecusthelper.adapter.NewsViewPagerAdapter;
-import com.ecust.ecusthelper.baseAndCommon.BaseAppCompatActivity;
+import com.ecust.ecusthelper.base.BaseAppCompatActivity;
 
 import java.util.concurrent.TimeUnit;
 
@@ -16,9 +15,6 @@ import butterknife.Bind;
 import rx.Observable;
 
 public class NewsActivity extends BaseAppCompatActivity {
-
-    @Bind(R.id.appbarlayout)
-    AppBarLayout mAppBarLayout;
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
     @Bind(R.id.tablayout)
@@ -36,11 +32,11 @@ public class NewsActivity extends BaseAppCompatActivity {
         setupViewPager();
         setupTabLayout();
 
-        Observable.just(0)
-                .delay(500, TimeUnit.MILLISECONDS)
-                .subscribe((Integer page) -> {
-                    selectFragment(page);
-                });
+//        Observable.just(0)
+//                .delay(500, TimeUnit.MILLISECONDS)
+//                .subscribe((Integer page) -> {
+//                    selectFragment(page);
+//                });
     }
 
     private void setupFragmentAdapter() {
@@ -49,19 +45,19 @@ public class NewsActivity extends BaseAppCompatActivity {
 
     private void setupViewPager() {
         mViewPager.setAdapter(mAdapter);
-        mViewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                selectFragment(position);
-            }
-        });
+//        mViewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+//            @Override
+//            public void onPageSelected(int position) {
+//                selectFragment(position);
+//            }
+//        });
     }
 
     private void selectFragment(int position) {
-        final NewsFragment mFragment = (NewsFragment) mAdapter.getItem(position);
+//        final NewsFragment mFragment = (NewsFragment) mAdapter.getItem(position);
 
-        mFragment.onAttach(this);
-        mFragment.onCurrentFragmentSelected();
+//        mFragment.onAttach(this);
+//        mFragment.onCurrentFragmentSelected();
     }
 
     private void setupTabLayout() {

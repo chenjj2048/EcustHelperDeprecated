@@ -3,6 +3,7 @@ package com.ecust.ecusthelper.bean.news;
 import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 
+import com.annimon.stream.Objects;
 import com.ecust.ecusthelper.util.RelativeDateFormat;
 import com.ecust.ecusthelper.util.log.logUtil;
 
@@ -20,11 +21,6 @@ import java.util.Date;
 public final class NewsItem implements Comparable<NewsItem>, Serializable {
     private static final long serialVersionUID = 12305938204985L;
 
-    @SuppressLint("SimpleDateFormat")
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    private static final RelativeDateFormat relativeDate = new RelativeDateFormat(dateFormat, false);
-    private static final String NEWS_URL_PREFFIX = "http://news.ecust.edu.cn/news/";
-
     /**
      * 标题
      */
@@ -32,61 +28,19 @@ public final class NewsItem implements Comparable<NewsItem>, Serializable {
     /**
      * 时间
      */
-    private final String rawTimeString;
+    private final CompressedTime time;
     /**
      * 网络地址
      */
-    private final String shorturl;
-    private final long timeValue;
-    private final int hash;
+    private final CompressedUrl url;
 
     public NewsItem(String title, String time, String url) {
-        this.timeValue = parseTimeValue(time);
+        Objects.requireNonNull(title);
+        Objects.requireNonNull(time);
+        Objects.requireNonNull(url);
         this.title = title;
-        this.shorturl = createShortUrl(url);
-        this.rawTimeString = time;
-        this.hash = hashCode();
-    }
-
-    /**
-     * 恢复长地址
-     */
-    @NonNull
-    private String getShortUrl() {
-        String url;
-        if (!shorturl.contains("http://"))
-            url = NEWS_URL_PREFFIX + shorturl;
-        else
-            url = shorturl;
-
-        logUtil.v("shorturl", shorturl + " " + url);
-        return url;
-    }
-
-    /**
-     * 转换短地址，节省空间
-     */
-    @NonNull
-    private String createShortUrl(String url) {
-        if (url.contains(NEWS_URL_PREFFIX))
-            url = url.replace(NEWS_URL_PREFFIX, "");
-        return url;
-    }
-
-    /**
-     * 字符串解析为数字
-     *
-     * @param time 类似于 "2016-05-20"
-     * @return 数字
-     */
-    public long parseTimeValue(String time) {
-        try {
-            Date date = dateFormat.parse(time);
-            return date.getTime();
-        } catch (ParseException e) {
-            logUtil.e(this, e.getMessage());
-            throw new IllegalArgumentException("日期解析错误");
-        }
+        this.time = new CompressedTime(time);
+        this.url = new CompressedUrl(url);
     }
 
     public String getTitle() {
@@ -94,11 +48,23 @@ public final class NewsItem implements Comparable<NewsItem>, Serializable {
     }
 
     public String getTime() {
-        return rawTimeString;
+        return time.get();
     }
 
     public String getUrl() {
-        return getShortUrl();
+        return url.get();
+    }
+
+    @Override
+    public int compareTo(@NonNull NewsItem another) {
+        return this.time.compareTo(another.time);
+    }
+
+    /**
+     * @return 几天前等字样
+     */
+    public String getRelativeTimeFromNow() {
+        return time.getRelativeTimeFromNow();
     }
 
     @Override
@@ -108,41 +74,126 @@ public final class NewsItem implements Comparable<NewsItem>, Serializable {
 
         NewsItem item = (NewsItem) o;
 
-        if (timeValue != item.timeValue) return false;
         if (!title.equals(item.title)) return false;
-        if (!rawTimeString.equals(item.rawTimeString)) return false;
-        return shorturl.equals(item.shorturl);
+        if (!time.equals(item.time)) return false;
+        return url.equals(item.url);
 
     }
 
     @Override
     public int hashCode() {
-        if (hash != 0) return hash;
         int result = title.hashCode();
-        result = 31 * result + rawTimeString.hashCode();
-        result = 31 * result + shorturl.hashCode();
-        result = 31 * result + (int) (timeValue ^ (timeValue >>> 32));
+        result = 31 * result + time.hashCode();
+        result = 31 * result + url.hashCode();
         return result;
     }
 
-    @Override
-    public int compareTo(@NonNull NewsItem another) {
-        long delta = this.timeValue - another.timeValue;
+/**
+ * =====================================
+ * 以下为用到的两个类（用于减少占用空间，增加Compare的效率）
+ * 1.存时间
+ * 2.存地址
+ * =====================================
+ */
+
+    /**
+     * 存储时间的集合
+     */
+    static class CompressedTime implements Comparable<CompressedTime>, Serializable {
+        @SuppressLint("SimpleDateFormat")
+        private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        private static final RelativeDateFormat relativeDate = new RelativeDateFormat(dateFormat, false);
+
+        private final String time;
+        private final long timeValue;
+
+        public CompressedTime(String time) {
+            this.time = time;
+            this.timeValue = parseTimeValue(time);
+        }
+
+        /**
+         * 字符串解析为数字
+         *
+         * @param time 类似于 "2016-05-20"
+         * @return 数字
+         */
+        private long parseTimeValue(String time) throws IllegalArgumentException {
+            try {
+                Date date = dateFormat.parse(time);
+                return date.getTime();
+            } catch (ParseException e) {
+                logUtil.e(this, e.getMessage());
+                throw new IllegalArgumentException("日期解析错误");
+            }
+        }
+
+        public String get() {
+            return time;
+        }
+
+        /**
+         * @return 几天前字样
+         */
+        public String getRelativeTimeFromNow() {
+            return relativeDate.parseDateAndTime(timeValue);
+        }
+
         /**
          * 直接return (int)delta会产生错误，一部分数据转型后被截断，大小比较错误
          */
-        if (delta > 0)
-            return 1;
-        else if (delta < 0)
-            return -1;
-        else
-            return 0;
+        @Override
+        public int compareTo(@NonNull CompressedTime another) {
+            long delta = this.timeValue - another.timeValue;
+            return (int) Math.signum(delta);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            CompressedTime that = (CompressedTime) o;
+
+            return time.equals(that.time);
+
+        }
+
+        @Override
+        public int hashCode() {
+            return time.hashCode();
+        }
     }
 
     /**
-     * @return 几天前等字样
+     * 压缩存储Url地址,节省空间
      */
-    public String getRelativeTime() {
-        return relativeDate.parseDateAndTime(timeValue);
+    static class CompressedUrl implements Serializable {
+        private static final String NEWS_URL_PREFFIX = "http://news.ecust.edu.cn/news/";
+        private final String url;
+
+        public CompressedUrl(String url) {
+            this.url = url.contains(NEWS_URL_PREFFIX) ? url.replace(NEWS_URL_PREFFIX, "") : url;
+        }
+
+        public String get() {
+            return url.contains("http://") ? url : NEWS_URL_PREFFIX + url;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            CompressedUrl that = (CompressedUrl) o;
+
+            return url.equals(that.url);
+
+        }
+
+        @Override
+        public int hashCode() {
+            return url.hashCode();
+        }
     }
 }
